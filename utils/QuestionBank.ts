@@ -18,75 +18,69 @@ export const generateLevelData = (levelId: number, grade: number): LevelData => 
   if (grade === 1) {
     theme = LevelTheme.FOREST;
     switch(unitId) {
-      case 1: // 数一数
-        config = { count: range(2, 10), visual: 'apple', ans: 0 };
+      case 1: // 准备课：数一数
+        config = { count: range(3, 10), visual: 'apple', ans: 0 };
         qType = GameType.COUNTING;
         qText = "数一数，图中有多少个苹果？";
         config.ans = config.count;
         break;
-      case 2: // 比多少
-        const a12 = range(4, 8);
-        const b12 = range(2, 5);
+      case 2: // 准备课：比多少 (比大小认识)
+        const a12 = range(4, 9);
+        const b12 = range(1, 4);
         config = { left: a12, right: b12, ans: a12 > b12 ? '左边多' : '右边多' };
         qType = GameType.EQUATION;
-        qText = `左边有 ${a12} 个，右边有 ${b12} 个，哪边更多？`;
+        qText = `左边 ${a12} 个，右边 ${b12} 个，哪边更多？`;
         break;
       case 3: // 1-5的认识和加减法
         const a13 = range(1, 4);
         const b13 = range(1, 5 - a13);
         config = { left: a13, right: b13, ans: a13 + b13 };
         qType = GameType.ADDITION;
-        qText = `${a13} + ${b13} = ?`;
+        qText = `计算：${a13} + ${b13} = ?`;
         break;
       case 4: // 认识图形 (一)
         const s14 = pick(['circle', 'square', 'triangle', 'rectangle']);
         config = { shape: s14, ans: s14 === 'circle' ? '圆形' : s14 === 'square' ? '正方形' : s14 === 'triangle' ? '三角形' : '长方形' };
         qType = GameType.SHAPES;
-        qText = `请在下面找出：${config.ans}`;
+        qText = `哪个是 ${config.ans}？`;
         break;
       case 5: // 6-10的认识和加减法
         const a15 = range(6, 10);
         const b15 = range(1, 5);
         config = { left: a15, right: b15, ans: a15 - b15 };
         qType = GameType.SUBTRACTION;
-        qText = `${a15} - ${b15} = ?`;
+        qText = `计算：${a15} - ${b15} = ?`;
         break;
-      case 6: // 11-20各数的认识
-        const a16 = range(11, 20);
+      case 6: // 11-20各数的认识 (组成)
+        const a16 = range(11, 19);
         config = { ans: a16 };
         qType = GameType.EQUATION;
-        qText = `一个“十”和 ${a16 - 10} 个“一”合起来是多少？`;
+        qText = `10 和 ${a16 - 10} 合起来是多少？`;
         break;
       case 7: // 认识钟表
         const h17 = range(1, 12);
-        config = { ans: h17 };
+        config = { ans: h17, type: 'clock' };
         qType = GameType.EQUATION;
-        qText = `当分针对准12，时针对准 ${h17} 时，是几点钟？`;
+        qText = `分针对准12，时针对准 ${h17}，现在是几点？`;
         break;
-      case 8: // 20以内的进位加法
+      case 8: // 20以内的进位加法 (凑十法)
         const a18 = range(7, 9);
         const b18 = range(4, 6);
         config = { left: a18, right: b18, ans: a18 + b18 };
         qType = GameType.ADDITION;
-        qText = `${a18} + ${b18} = ? (提示：先凑成十)`;
+        qText = `${a18} + ${b18} = ? (试试凑十法)`;
         break;
+      default:
+        qText = "基础挑战";
+        config = { left: 1, right: 1, ans: 2 };
     }
   } 
-  // 其他年级逻辑保持精简同步...
   else {
-    const fallbackA = grade * 10;
-    const fallbackB = range(1, 5);
-    config = { left: fallbackA, right: fallbackB, ans: fallbackA + fallbackB };
-    qType = GameType.ADDITION;
-    qText = `第 ${unitId} 单元同步练习：${fallbackA} + ${fallbackB} = ?`;
-    theme = grade > 4 ? LevelTheme.SPACE : LevelTheme.DETECTIVE;
-  }
-
-  // 兜底处理
-  if (!qText) {
-    config = { left: 5, right: 2, ans: 7 };
-    qType = GameType.ADDITION;
-    qText = "基础巩固：5 + 2 = ?";
+    // 简单填充其他年级，防止报错
+    const base = grade * 10;
+    config = { left: base, right: range(1, 9), ans: base + 1 };
+    qText = `同步练习：${config.left} + ${config.right} = ?`;
+    config.ans = config.left + config.right;
   }
 
   return {
@@ -99,6 +93,6 @@ export const generateLevelData = (levelId: number, grade: number): LevelData => 
     config: config,
     stars: 0,
     locked: false,
-    uniqueId: `${grade}-${unitId}-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`
+    uniqueId: `${grade}-${unitId}-${Date.now()}`
   } as LevelData;
 };

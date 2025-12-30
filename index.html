@@ -41,8 +41,8 @@
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
@@ -60,9 +60,7 @@
     <style>
       :root {
         --sat: env(safe-area-inset-top);
-        --sar: env(safe-area-inset-right);
         --sab: env(safe-area-inset-bottom);
-        --sal: env(safe-area-inset-left);
       }
       
       html, body { 
@@ -75,7 +73,6 @@
         background-color: #f0f9ff;
         touch-action: manipulation;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: none;
       }
 
       #root { 
@@ -89,10 +86,6 @@
       .pt-safe { padding-top: max(1rem, var(--sat)); }
       .pb-safe { padding-bottom: max(1rem, var(--sab)); }
       
-      button, [role="button"] {
-        -webkit-tap-highlight-color: transparent;
-      }
-
       #error-overlay {
         display: none; 
         position: fixed; 
@@ -107,12 +100,27 @@
         font-family: system-ui, -apple-system, sans-serif; 
         overflow: auto;
       }
+
+      /* 初始加载动画 */
+      .loader {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        color: #4D96FF;
+      }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
     <div id="error-overlay"></div>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loader">
+        <div class="mb-4 text-4xl animate-bounce">✏️</div>
+        <div class="text-xl font-bold">数学魔法加载中...</div>
+      </div>
+    </div>
 
     <script>
       window.onerror = function(msg, url, line, col, error) {
@@ -127,7 +135,7 @@
                 <strong>详情：</strong>${msg}<br>
                 <strong>位置：</strong>${line}行
               </div>
-              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold;">点击重试</button>
+              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer;">点击重试</button>
             </div>
           `;
         }

@@ -1,14 +1,14 @@
 
 import React, { useState } from 'react';
-import { Home } from './views/Home.tsx';
-import { AdventureMap } from './views/AdventureMap.tsx';
-import { GameLevel } from './views/GameLevel.tsx';
-import { Tools } from './views/Tools.tsx';
-import { MakeTenTool } from './views/MakeTenTool.tsx';
-import { ParentDashboard } from './views/ParentDashboard.tsx';
-import { AppView, LevelData, Reward, Task } from './types.ts';
-import { LEVEL_DATA } from './constants.ts';
-import { generateLevelData } from './utils/QuestionBank.ts';
+import { Home } from './views/Home';
+import { AdventureMap } from './views/AdventureMap';
+import { GameLevel } from './views/GameLevel';
+import { Tools } from './views/Tools';
+import { MakeTenTool } from './views/MakeTenTool';
+import { ParentDashboard } from './views/ParentDashboard';
+import { AppView, LevelData, Reward, Task } from './types';
+import { LEVEL_DATA } from './constants';
+import { generateLevelData } from './utils/QuestionBank';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -43,14 +43,9 @@ const App: React.FC = () => {
   };
 
   const handleSelectLevel = (id: number) => {
-    try {
-      // Force regeneration by using a fresh random seed/timestamp logic inside generator
-      const data = generateLevelData(id, selectedGrade);
-      setActiveLevel(data);
-      setCurrentView(AppView.GAME_LEVEL);
-    } catch (error) {
-      console.error("Level generation failed:", error);
-    }
+    const data = generateLevelData(id, selectedGrade);
+    setActiveLevel(data);
+    setCurrentView(AppView.GAME_LEVEL);
   };
 
   const handleComplete = (levelId: number, stars: number) => {
@@ -98,7 +93,7 @@ const App: React.FC = () => {
 
       {currentView === AppView.GAME_LEVEL && activeLevel && (
         <GameLevel 
-          key={activeLevel.uniqueId} // Use uniqueId as key to force complete remount for fresh UI
+          key={activeLevel.uniqueId}
           level={activeLevel} 
           onBack={() => setCurrentView(AppView.ADVENTURE_MAP)} 
           onComplete={handleComplete} 
