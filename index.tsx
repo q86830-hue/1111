@@ -8,9 +8,18 @@ const startApp = () => {
   if (rootElement) {
     try {
       const root = ReactDOM.createRoot(rootElement);
-      root.render(<App />);
+      // React 18+ replaces the child nodes automatically when render is called,
+      // but explicitly clearing for a cleaner transition if needed.
+      root.render(
+        <React.StrictMode>
+          <App />
+        </React.StrictMode>
+      );
     } catch (error) {
       console.error("Mounting Error:", error);
+      if (window.onerror) {
+        window.onerror(error.message, 'index.tsx', 0, 0, error);
+      }
     }
   }
 };

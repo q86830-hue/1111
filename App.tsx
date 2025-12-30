@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Home } from './views/Home';
 import { AdventureMap } from './views/AdventureMap';
 import { GameLevel } from './views/GameLevel';
@@ -43,9 +43,14 @@ const App: React.FC = () => {
   };
 
   const handleSelectLevel = (id: number) => {
-    const data = generateLevelData(id, selectedGrade);
-    setActiveLevel(data);
-    setCurrentView(AppView.GAME_LEVEL);
+    try {
+      const data = generateLevelData(id, selectedGrade);
+      setActiveLevel(data);
+      setCurrentView(AppView.GAME_LEVEL);
+    } catch (err) {
+      console.error("Failed to generate level:", err);
+      alert("关卡生成失败，请稍后再试");
+    }
   };
 
   const handleComplete = (levelId: number, stars: number) => {
@@ -56,6 +61,16 @@ const App: React.FC = () => {
       return l;
     }));
     setCurrentView(AppView.ADVENTURE_MAP);
+  };
+
+  const handleLoseLife = () => {
+    setLives(prev => {
+      const newLives = prev - 1;
+      if (newLives <= 0) {
+        // Potential logic for Game Over state
+      }
+      return Math.max(0, newLives);
+    });
   };
 
   return (
@@ -98,11 +113,8 @@ const App: React.FC = () => {
           onBack={() => setCurrentView(AppView.ADVENTURE_MAP)} 
           onComplete={handleComplete} 
           currentLives={lives} 
-          onLoseLife={() => setLives(l => l - 1)} 
-          onRevive={() => setLives(5)} 
+          onLoseLife={handleLoseLife} 
           onUpdateCoins={updateCoins}
-          punishments={[]} 
-          parentPin={parentPin} 
         />
       )}
 

@@ -7,12 +7,12 @@
     <title>快乐数学 - 同步人教版</title>
     
     <!-- 性能优化：预加载核心模块 -->
-    <link rel="modulepreload" href="https://esm.sh/react@19.0.0" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client" />
+    <link rel="modulepreload" href="https://esm.sh/react@19.0.0" crossorigin="anonymous" />
+    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0" crossorigin="anonymous" />
+    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client" crossorigin="anonymous" />
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
+    <script crossorigin="anonymous">
       window.process = { env: { NODE_ENV: 'production' } };
       window.global = window;
       
@@ -48,14 +48,14 @@
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
     
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
+    <script crossorigin="anonymous">
       Babel.registerPreset("tsx", {
         presets: [
           [Babel.availablePresets["typescript"], { allExtensions: true, isTSX: true }],
@@ -142,13 +142,16 @@
       </div>
     </div>
 
-    <script>
+    <script crossorigin="anonymous">
       window.onerror = function(msg, url, line, col, error) {
+        // Filter out benign extension errors
+        if (msg.includes('ExtensionContext') || msg.includes('chrome-extension')) return;
+        
         const overlay = document.getElementById('error-overlay');
         if (overlay) {
           overlay.style.display = 'block';
           overlay.innerHTML = `
-            <div style="max-width: 500px; margin: 2rem auto; text-align: center;">
+            <div style="max-width: 500px; margin: 2rem auto; text-align: center; padding: 1rem;">
               <h1 style="font-size: 5rem; margin-bottom: 1rem;">😵</h1>
               <h2 style="color: #1f2937; font-weight: 800; font-size: 1.5rem;">魔法课堂加载失败</h2>
               <p style="color: #6b7280; margin-bottom: 2rem;">可能是网络魔法开小差了</p>
@@ -156,7 +159,7 @@
                 <strong>详情：</strong>${msg}<br>
                 <strong>位置：</strong>${line}行
               </div>
-              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer;">点击重试</button>
+              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;">点击重试</button>
             </div>
           `;
         }
@@ -164,7 +167,7 @@
       };
     </script>
 
-    <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx"></script>
+    <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx" crossorigin="anonymous"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
