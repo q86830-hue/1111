@@ -59,9 +59,9 @@ export const AdventureMap: React.FC<AdventureMapProps> = ({
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner border-b-4 border-black/10
                   ${index % 3 === 0 ? 'bg-blue-100' : index % 3 === 1 ? 'bg-green-100' : 'bg-purple-100'}
                 `}>
-                  {index + 1}
+                  {unit.id}
                 </div>
-                <div className="bg-slate-100 px-3 py-1 rounded-full text-[9px] font-black text-slate-400 uppercase tracking-widest">UNIT {unit.id}</div>
+                <div className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{unit.unit}</div>
               </div>
               <h3 className="text-xl font-black text-gray-800 mb-1 leading-tight">{unit.title}</h3>
               <p className="text-[10px] text-brand-blue font-black uppercase tracking-wider opacity-60">点击进入挑战</p>
@@ -80,7 +80,7 @@ export const AdventureMap: React.FC<AdventureMapProps> = ({
           </div>
         )}
 
-        <div className="h-20 w-full" /> {/* 底部占位 */}
+        <div className="h-20 w-full" />
       </div>
     </div>
   );
