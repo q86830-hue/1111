@@ -7,7 +7,7 @@ const pick = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
 
 export const generateLevelData = (levelId: number, grade: number): LevelData => {
   const unitId = levelId % 100;
-  const currGrade = PEP_CURRICULUM[grade] || PEP_CURRICULUM[1]; // Fallback to G1
+  const currGrade = PEP_CURRICULUM[grade] || PEP_CURRICULUM[1];
   const curriculum = currGrade.find(u => u.id === unitId) || currGrade[0];
   
   const { type, constraints, title } = curriculum;
@@ -18,112 +18,90 @@ export const generateLevelData = (levelId: number, grade: number): LevelData => 
   const MAX = constraints?.max || 10;
   const MIN = constraints?.min || 0;
 
-  switch (type) {
-    case GameType.COUNTING:
-      const count = range(Math.max(MIN, 1), MAX);
-      ans = count;
-      question = `数一数图中一共有多少个物体？`;
-      config = { count, items: ['🦊', '🐻', '🐰', '🦁', '🐼'], visualType: "COUNT_ITEMS" };
-      break;
+  try {
+    switch (type) {
+      case GameType.COUNTING:
+        const count = range(Math.max(MIN, 1), MAX);
+        ans = count;
+        question = `数一数图中一共有多少个物体？`;
+        config = { count, items: ['🦊', '🐻', '🐰', '🦁', '🐼'], visualType: "COUNT_ITEMS" };
+        break;
 
-    case GameType.ADDITION:
-      if (grade === 1) {
-        const sum = range(2, Math.min(MAX, 10));
+      case GameType.ADDITION:
+        const sum = range(Math.max(MIN, 2), MAX);
         const a1 = range(0, sum);
         ans = sum;
         config = { n1: a1, n2: sum - a1, symbol: '+', visualType: "BASIC_CALC" };
-      } else {
-        const sum = range(100, Math.max(MAX, 1000));
-        const a1 = range(50, sum - 10);
-        ans = sum;
-        config = { n1: a1, n2: sum - a1, symbol: '+', visualType: "BASIC_CALC" };
-      }
-      question = `请算出算式结果：${config.n1} + ${config.n2} = ?`;
-      break;
+        question = `请算出算式结果：${config.n1} + ${config.n2} = ?`;
+        break;
 
-    case GameType.SUBTRACTION:
-      const v1 = range(Math.max(MIN, 5), MAX);
-      const v2 = range(0, v1);
-      ans = v1 - v2;
-      question = `请算出算式结果：${v1} - ${v2} = ?`;
-      config = { n1: v1, n2: v2, symbol: '-', visualType: "BASIC_CALC" };
-      break;
+      case GameType.DECOMPOSITION:
+        const dTotal = range(Math.max(MIN, 2), MAX);
+        const dP1 = range(1, dTotal - 1);
+        ans = dTotal - dP1;
+        question = `${dTotal} 可以分成 ${dP1} 和几？`;
+        config = { total: dTotal, part1: dP1, visualType: "NUMBER_BOND" };
+        break;
 
-    case GameType.DECOMPOSITION:
-      const decompTotal = range(Math.max(MIN, 3), Math.min(MAX, 10));
-      const decompP1 = range(1, decompTotal - 1);
-      ans = decompTotal - decompP1;
-      question = `${decompTotal} 可以分成 ${decompP1} 和几？`;
-      config = { total: decompTotal, part1: decompP1, visualType: "NUMBER_BOND" };
-      break;
+      case GameType.PLACE_VALUE:
+        const ones = range(0, 9);
+        const tens = 1; // 针对一上 11-20 单元
+        ans = tens * 10 + ones;
+        config = { tens, ones, visualType: "PLACE_VALUE_BLOCKS" };
+        question = `图中表示的数是多少？`;
+        break;
 
-    case GameType.PLACE_VALUE:
-      if (grade === 1) {
-        const o = range(0, 9);
-        const t = range(1, 1); // For 11-20
-        ans = t * 10 + o;
-        config = { tens: t, ones: o, visualType: "PLACE_VALUE_BLOCKS" };
-      } else if (grade >= 4) {
-        const val = range(100000, 999999);
-        ans = val;
-        config = { value: val, visualType: "PLACE_VALUE_CARDS_LARGE" };
-      } else {
-        const t = range(1, 9), o = range(0, 9);
-        ans = t * 10 + o;
-        config = { tens: t, ones: o, visualType: "PLACE_VALUE_BLOCKS" };
-      }
-      question = `图中表示的数是多少？`;
-      break;
+      case GameType.MAKE_TEN:
+        const m1 = range(7, 9);
+        const m2 = range(3, 9);
+        ans = m1 + m2;
+        config = { n1: m1, n2: m2, visualType: "MAKE_TEN_VISUAL" };
+        question = `利用凑十法，计算 ${m1} + ${m2} 的结果：`;
+        break;
 
-    case GameType.SHAPES_3D:
-      const s3d = pick(['长方体', '正方体', '圆柱', '球']);
-      ans = s3d;
-      question = `观察物体，它属于哪种立体图形？`;
-      config = { shape: s3d, visualType: "SHAPE_3D_VIEW" };
-      break;
+      case GameType.CLOCK:
+        const hour = range(1, 12);
+        ans = hour;
+        config = { h: hour, m: 0, visualType: "ANALOG_CLOCK" };
+        question = `现在时针指向几时？（整时）`;
+        break;
 
-    default:
-      // Generic fallback for any unhandled type
-      const fallbackVal = range(1, 10);
-      ans = fallbackVal;
-      question = `知识点挑战：${title}`;
-      config = { count: ans, items: ['🌟'], visualType: "COUNT_ITEMS" };
-  }
-
-  config.ans = ans;
-  let options = [ans.toString()];
-  
-  // Safe option generation
-  let attempts = 0;
-  while (options.length < 3 && attempts < 20) {
-    attempts++;
-    let wrong = "";
-    if (typeof ans === 'number') {
-      wrong = (ans + pick([-2, -1, 1, 2, 3])).toString();
-    } else if (type === GameType.SHAPES_3D) {
-      wrong = pick(['长方体', '正方体', '圆柱', '球']);
-    } else if (type === GameType.DECOMPOSITION) {
-      wrong = (range(1, 10)).toString();
-    } else {
-      wrong = `选项 ${options.length + 1}`;
+      default:
+        ans = range(1, 5);
+        question = `数一数：`;
+        config = { count: ans, items: ['🍎'], visualType: "COUNT_ITEMS" };
     }
 
-    if (wrong && wrong !== ans.toString() && !options.includes(wrong) && parseInt(wrong) >= 0) {
-      options.push(wrong);
+    config.ans = ans;
+    let options = [ans.toString()];
+    while (options.length < 3) {
+      const wrong = typeof ans === 'number' 
+        ? (ans + range(-2, 2)).toString() 
+        : "其他";
+      if (wrong !== ans.toString() && !options.includes(wrong) && parseInt(wrong) >= 0) {
+        options.push(wrong);
+      }
     }
-  }
 
-  return {
-    id: levelId,
-    grade,
-    title,
-    unit: curriculum.unit,
-    theme: curriculum.theme,
-    type,
-    question,
-    config: { ...config, options: options.sort(() => Math.random() - 0.5) },
-    stars: 0,
-    locked: false,
-    uniqueId: `${grade}-${unitId}-${Date.now()}`
-  };
+    return {
+      id: levelId,
+      grade,
+      title,
+      unit: curriculum.unit,
+      theme: curriculum.theme,
+      type,
+      question,
+      config: { ...config, options: options.sort(() => Math.random() - 0.5) },
+      stars: 0,
+      locked: false,
+      uniqueId: `${grade}-${unitId}-${Date.now()}`
+    };
+  } catch (e) {
+    // 兜底生成逻辑
+    return {
+      id: levelId, grade, title: "魔法测验", unit: "一上", theme: LevelTheme.FOREST, type: GameType.COUNTING,
+      question: "数一数有几个星星？", config: { count: 3, items: ['⭐'], ans: 3, options: ['2','3','4'], visualType: 'COUNT_ITEMS' },
+      stars: 0, locked: false, uniqueId: 'fallback'
+    };
+  }
 };

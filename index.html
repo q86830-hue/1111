@@ -6,11 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
-    <!-- 性能优化：预加载核心模块 -->
+    <!-- 1. 预加载核心库，确保网络优先级 -->
     <link rel="modulepreload" href="https://esm.sh/react@19.0.0" crossorigin="anonymous" />
     <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0" crossorigin="anonymous" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client" crossorigin="anonymous" />
 
+    <!-- 2. Tailwind 配置 -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin="anonymous">
       window.process = { env: { NODE_ENV: 'production' } };
@@ -28,32 +28,32 @@
             fontFamily: { sans: ['"Comic Sans MS"', '"Chalkboard SE"', '"Microsoft YaHei"', 'sans-serif'] },
             keyframes: {
               wiggle: { '0%, 100%': { transform: 'rotate(-2deg)' }, '50%': { transform: 'rotate(2deg)' } },
-              pop: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
-              float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+              pop: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } }
             },
             animation: {
               wiggle: 'wiggle 0.3s ease-in-out infinite',
               pop: 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-              'bounce-slow': 'bounce 3s infinite',
-              'float': 'float 2s ease-in-out infinite'
+              'bounce-slow': 'bounce 3s infinite'
             }
           }
         }
       }
     </script>
 
+    <!-- 3. 核心：修复 Import Map，确保模块能正确解析 -->
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0",
     "react-dom": "https://esm.sh/react-dom@19.0.0",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
     
+    <!-- 4. Babel 编译器 -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
     <script crossorigin="anonymous">
       Babel.registerPreset("tsx", {
@@ -65,70 +65,15 @@
     </script>
 
     <style>
-      :root {
-        --sat: env(safe-area-inset-top);
-        --sab: env(safe-area-inset-bottom);
-      }
-      
-      html, body { 
-        height: 100%;
-        height: 100dvh; 
-        width: 100vw;
-        margin: 0; 
-        padding: 0; 
-        overflow: hidden; 
-        background-color: #f0f9ff;
-        touch-action: manipulation;
-        -webkit-overflow-scrolling: touch;
-      }
-
-      #root { 
-        height: 100%; 
-        width: 100%; 
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-
+      :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
+      html, body { height: 100dvh; width: 100vw; margin: 0; padding: 0; overflow: hidden; background-color: #f0f9ff; touch-action: manipulation; }
+      #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
       .pt-safe { padding-top: max(1rem, var(--sat)); }
       .pb-safe { padding-bottom: max(1rem, var(--sab)); }
-      
-      #error-overlay {
-        display: none; 
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        width: 100vw; 
-        height: 100vh; 
-        background: white; 
-        color: #ef4444; 
-        z-index: 10000; 
-        padding: 2rem;
-        font-family: system-ui, -apple-system, sans-serif; 
-        overflow: auto;
-      }
-
-      .loader-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        height: 100%;
-        background: radial-gradient(circle, #f0f9ff 0%, #dbeafe 100%);
-      }
-
-      .pencil-loader {
-        font-size: 64px;
-        animation: writing 1.5s infinite ease-in-out;
-      }
-
-      @keyframes writing {
-        0% { transform: translate(0, 0) rotate(0deg); }
-        25% { transform: translate(20px, -20px) rotate(10deg); }
-        50% { transform: translate(40px, 0) rotate(0deg); }
-        75% { transform: translate(20px, 20px) rotate(-10deg); }
-        100% { transform: translate(0, 0) rotate(0deg); }
-      }
+      #error-overlay { display: none; position: fixed; inset: 0; background: white; z-index: 10000; padding: 2rem; font-family: sans-serif; overflow: auto; }
+      .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #f0f9ff; }
+      .pencil-loader { font-size: 64px; animation: writing 1.5s infinite ease-in-out; }
+      @keyframes writing { 0%, 100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(20px, -10px) rotate(10deg); } }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
@@ -138,28 +83,22 @@
       <div class="loader-container">
         <div class="pencil-loader mb-6">✏️</div>
         <div class="text-2xl font-black text-brand-blue animate-pulse">数学魔法布置中...</div>
-        <div class="mt-4 text-sm text-blue-400 font-bold">同步人教版 1-6 年级课程</div>
       </div>
     </div>
 
     <script crossorigin="anonymous">
       window.onerror = function(msg, url, line, col, error) {
-        // Filter out benign extension errors
-        if (msg.includes('ExtensionContext') || msg.includes('chrome-extension')) return;
-        
         const overlay = document.getElementById('error-overlay');
         if (overlay) {
           overlay.style.display = 'block';
           overlay.innerHTML = `
-            <div style="max-width: 500px; margin: 2rem auto; text-align: center; padding: 1rem;">
-              <h1 style="font-size: 5rem; margin-bottom: 1rem;">😵</h1>
-              <h2 style="color: #1f2937; font-weight: 800; font-size: 1.5rem;">魔法课堂加载失败</h2>
-              <p style="color: #6b7280; margin-bottom: 2rem;">可能是网络魔法开小差了</p>
-              <div style="text-align: left; background: #fef2f2; padding: 1rem; border-radius: 1rem; font-size: 0.75rem; color: #b91c1c; border: 1px solid #fecaca; margin: 1.5rem 0; white-space: pre-wrap; word-break: break-all;">
-                <strong>详情：</strong>${msg}<br>
-                <strong>位置：</strong>${line}行
+            <div style="max-width: 400px; margin: 5rem auto; text-align: center;">
+              <div style="font-size: 80px;">😵</div>
+              <h2 style="font-weight: 900; color: #1f2937; font-size: 1.5rem; margin: 1rem 0;">模块加载失败</h2>
+              <div style="text-align: left; background: #fef2f2; padding: 1rem; border-radius: 1rem; font-size: 0.75rem; color: #b91c1c; border: 1px solid #fecaca; margin-bottom: 2rem;">
+                <strong>详情：</strong>${msg}<br><strong>位置：</strong>${line}行
               </div>
-              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer; transition: background 0.2s;">点击重试</button>
+              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer;">点击重试魔法</button>
             </div>
           `;
         }
@@ -167,6 +106,7 @@
       };
     </script>
 
+    <!-- 5. 确保 index.tsx 作为 type="module" 加载 -->
     <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx" crossorigin="anonymous"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
