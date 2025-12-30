@@ -42,7 +42,6 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
   const [errorShake, setErrorShake] = useState(false);
   const [successAnim, setSuccessAnim] = useState(false);
 
-  // 自动校验支付
   useEffect(() => {
     if (inputPin.length === 4) {
       if (inputPin === parentPin && pendingReward) {
@@ -63,7 +62,7 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
         }, 500);
       }
     }
-  }, [inputPin]);
+  }, [inputPin, parentPin, pendingReward, onUpdateCoins]);
 
   const initiateRedeem = (reward: Reward) => {
     if (coins >= reward.cost) {
@@ -87,69 +86,70 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
 
   if (!isParentMode) {
     return (
-      <div className="min-h-screen bg-[#FFFBEB] flex flex-col relative overflow-hidden">
-        {/* 支付弹窗 */}
+      <div className="h-full w-full bg-[#FFFBEB] flex flex-col relative overflow-hidden pt-safe pb-safe">
+        {/* 支付验证弹窗 */}
         {showPayModal && pendingReward && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-pop">
-            <div className={`bg-white rounded-[2rem] p-6 w-full max-w-xs text-center shadow-2xl border-4 border-brand-yellow ${errorShake ? 'animate-wiggle' : ''}`}>
-              <div className="text-4xl mb-2">{pendingReward.icon}</div>
-              <div className="font-black text-gray-800 text-lg">{pendingReward.name}</div>
-              <div className="text-yellow-600 font-bold mb-4">支付 {pendingReward.cost} 金币</div>
+          <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-md p-4 animate-pop">
+            <div className={`bg-white rounded-[3rem] p-8 w-full max-w-xs text-center shadow-2xl border-4 border-brand-yellow ${errorShake ? 'animate-wiggle' : ''}`}>
+              <div className="text-6xl mb-4">{pendingReward.icon}</div>
+              <div className="font-black text-gray-800 text-xl mb-1">{pendingReward.name}</div>
+              <div className="text-yellow-600 font-black text-lg mb-6">需支付 {pendingReward.cost} 金币</div>
               
-              <div className="flex justify-center space-x-3 mb-6">
+              <div className="flex justify-center space-x-4 mb-8">
                 {[0, 1, 2, 3].map(i => (
-                  <div key={i} className={`w-3 h-3 rounded-full border-2 border-gray-300 ${i < inputPin.length ? 'bg-brand-blue border-brand-blue' : ''}`}></div>
+                  <div key={i} className={`w-4 h-4 rounded-full border-4 border-gray-100 ${i < inputPin.length ? 'bg-brand-blue border-brand-blue' : 'bg-transparent'}`}></div>
                 ))}
               </div>
 
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-3 gap-3">
                 {[1,2,3,4,5,6,7,8,9].map(n => (
-                  <button key={n} onClick={() => handlePinInput(n.toString())} className="h-12 rounded-xl bg-gray-50 font-black text-lg active:bg-gray-200">{n}</button>
+                  <button key={n} onClick={() => handlePinInput(n.toString())} className="h-14 rounded-2xl bg-gray-50 font-black text-xl active:bg-gray-200 border-b-4 border-gray-200 active:border-b-0 active:translate-y-1 transition-all">{n}</button>
                 ))}
-                <button onClick={() => { setShowPayModal(false); setPendingReward(null); }} className="h-12 text-red-400 font-bold text-xs">取消</button>
-                <button onClick={() => handlePinInput('0')} className="h-12 bg-gray-50 font-black text-lg">0</button>
-                <button onClick={() => setInputPin('')} className="h-12 text-gray-400 font-bold text-xs">清空</button>
+                <button onClick={() => { setShowPayModal(false); setPendingReward(null); }} className="h-14 text-red-400 font-black text-sm">取消</button>
+                <button onClick={() => handlePinInput('0')} className="h-14 rounded-2xl bg-gray-50 font-black text-xl active:bg-gray-200 border-b-4 border-gray-200 active:border-b-0 active:translate-y-1 transition-all">0</button>
+                <button onClick={() => setInputPin('')} className="h-14 text-gray-400 font-black text-sm">重置</button>
               </div>
             </div>
           </div>
         )}
 
-        {/* 成功反馈 */}
+        {/* 成功动画 */}
         {successAnim && (
-          <div className="fixed inset-0 z-[60] flex items-center justify-center bg-brand-green/95 p-4 animate-pop">
+          <div className="fixed inset-0 z-[110] flex items-center justify-center bg-brand-green/95 p-4 animate-pop">
             <div className="text-center text-white">
-              <div className="text-8xl mb-4">🎁</div>
-              <h2 className="text-3xl font-black">兑换成功！</h2>
-              <p className="font-bold opacity-80 mt-2">快去找妈妈领取吧</p>
+              <div className="text-9xl mb-6 animate-bounce">🎊</div>
+              <h2 className="text-4xl font-black mb-2">兑换成功！</h2>
+              <p className="text-xl font-black opacity-80">找爸爸妈妈领取奖励吧</p>
             </div>
           </div>
         )}
 
-        <div className="p-4 flex justify-between items-center bg-white shadow-sm sticky top-0 z-10">
-          <Button variant="neutral" size="sm" onClick={onBack}><ArrowLeftIcon /></Button>
-          <div className="flex items-center bg-yellow-100 px-4 py-1.5 rounded-full border-2 border-yellow-200">
-            <CoinIcon size={20} className="mr-2" />
-            <span className="font-black text-xl text-yellow-700">{coins}</span>
+        <div className="p-4 flex justify-between items-center bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-10 rounded-b-3xl mx-2">
+          <Button variant="neutral" size="sm" onClick={onBack} className="w-10 h-10 p-0 flex items-center justify-center rounded-full"><ArrowLeftIcon size={20} /></Button>
+          <div className="flex items-center bg-yellow-400/10 px-5 py-2 rounded-full border-2 border-yellow-400/30">
+            <CoinIcon size={22} className="mr-2" />
+            <span className="font-black text-2xl text-yellow-700">{coins}</span>
           </div>
         </div>
 
-        <div className="flex-1 p-4 overflow-y-auto">
-          <div className="grid grid-cols-2 gap-4 pb-10">
+        <div className="flex-1 p-6 overflow-y-auto overscroll-contain">
+          <h2 className="text-center font-black text-gray-400 tracking-[0.3em] text-sm mb-6 uppercase">魔法兑换超市</h2>
+          <div className="grid grid-cols-2 gap-6 pb-20">
             {rewards.map(reward => {
               const canAfford = coins >= reward.cost;
               return (
                 <button 
                   key={reward.id}
                   onClick={() => initiateRedeem(reward)}
-                  className={`bg-white rounded-3xl p-4 shadow-sm border-2 transition-all active:scale-95 flex flex-col items-center
-                    ${canAfford ? 'border-transparent hover:border-brand-yellow' : 'opacity-40 grayscale'}
+                  className={`bg-white rounded-[2.5rem] p-5 shadow-xl border-4 transition-all active:scale-95 flex flex-col items-center
+                    ${canAfford ? 'border-transparent hover:border-brand-yellow' : 'opacity-50 grayscale border-slate-100'}
                   `}
                 >
-                  <div className="text-5xl mb-3 bg-slate-50 w-full aspect-square flex items-center justify-center rounded-2xl">{reward.icon}</div>
-                  <div className="font-black text-gray-700 truncate w-full text-center">{reward.name}</div>
-                  <div className="mt-2 flex items-center space-x-1 text-yellow-600 font-black">
-                    <span>{reward.cost}</span>
-                    <CoinIcon size={14} />
+                  <div className="text-6xl mb-4 bg-slate-50 w-full aspect-square flex items-center justify-center rounded-[2rem] shadow-inner">{reward.icon}</div>
+                  <div className="font-black text-gray-800 text-lg mb-1 truncate w-full text-center px-1">{reward.name}</div>
+                  <div className="mt-auto flex items-center space-x-1.5 bg-yellow-50 px-4 py-1.5 rounded-full border border-yellow-100">
+                    <span className="font-black text-yellow-600 text-lg">{reward.cost}</span>
+                    <CoinIcon size={16} />
                   </div>
                 </button>
               );
@@ -161,37 +161,39 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-       <div className="p-4 flex justify-between items-center bg-slate-800 text-white">
+    <div className="h-full w-full bg-slate-50 flex flex-col pt-safe pb-safe">
+       <div className="p-4 flex justify-between items-center bg-slate-900 text-white rounded-b-[2rem] mx-2 mt-2 shadow-2xl">
           <div className="flex items-center">
-            <Button variant="neutral" size="sm" onClick={onBack} className="mr-3 bg-slate-700 text-white"><ArrowLeftIcon /></Button>
-            <h2 className="text-xl font-bold">后台管理</h2>
+            <Button variant="neutral" size="sm" onClick={onBack} className="mr-3 w-10 h-10 p-0 rounded-full border-none bg-slate-800 text-white flex items-center justify-center active:bg-slate-700"><ArrowLeftIcon size={18} /></Button>
+            <h2 className="text-xl font-black tracking-tight">后台管理中心</h2>
           </div>
-          <div className="flex items-center bg-slate-700 px-3 py-1 rounded-full">
-            <CoinIcon size={16} className="mr-2" />
-            <span className="font-black text-yellow-400">{coins}</span>
+          <div className="flex items-center bg-slate-800 px-4 py-1.5 rounded-full border border-slate-700 shadow-inner">
+            <CoinIcon size={18} className="mr-2" />
+            <span className="font-black text-yellow-400 text-lg tracking-wider">{coins}</span>
           </div>
        </div>
 
-       <div className="flex bg-white shadow-sm">
-           <button onClick={() => setActiveTab('TASKS')} className={`flex-1 py-4 font-bold border-b-4 ${activeTab === 'TASKS' ? 'border-brand-blue text-brand-blue' : 'border-transparent text-gray-400'}`}>任务奖惩</button>
-           <button onClick={() => setActiveTab('REWARDS')} className={`flex-1 py-4 font-bold border-b-4 ${activeTab === 'REWARDS' ? 'border-brand-yellow text-brand-orange' : 'border-transparent text-gray-400'}`}>商品设置</button>
-           <button onClick={() => setActiveTab('SETTINGS')} className={`flex-1 py-4 font-bold border-b-4 ${activeTab === 'SETTINGS' ? 'border-gray-500 text-gray-700' : 'border-transparent text-gray-400'}`}>设置</button>
+       <div className="flex bg-white/60 backdrop-blur-md shadow-sm mx-4 mt-6 rounded-2xl overflow-hidden border border-slate-200">
+           <button onClick={() => setActiveTab('TASKS')} className={`flex-1 py-4 font-black text-sm tracking-widest border-b-4 transition-colors ${activeTab === 'TASKS' ? 'border-brand-blue text-brand-blue bg-blue-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>任务奖惩</button>
+           <button onClick={() => setActiveTab('REWARDS')} className={`flex-1 py-4 font-black text-sm tracking-widest border-b-4 transition-colors ${activeTab === 'REWARDS' ? 'border-brand-yellow text-brand-orange bg-yellow-50/50' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>商品设置</button>
+           <button onClick={() => setActiveTab('SETTINGS')} className={`flex-1 py-4 font-black text-sm tracking-widest border-b-4 transition-colors ${activeTab === 'SETTINGS' ? 'border-slate-800 text-slate-800 bg-slate-100' : 'border-transparent text-gray-400 hover:text-gray-600'}`}>系统安全</button>
        </div>
 
-       <div className="flex-1 p-6 max-w-2xl mx-auto w-full overflow-y-auto">
+       <div className="flex-1 p-6 max-w-2xl mx-auto w-full overflow-y-auto overscroll-contain">
            {activeTab === 'TASKS' && (
-               <div className="grid grid-cols-1 gap-4">
+               <div className="space-y-4">
                    {tasks.map(task => (
-                       <div key={task.id} className="bg-white p-4 rounded-2xl border flex justify-between items-center shadow-sm">
-                           <button onClick={() => onUpdateCoins(task.value)} className="flex items-center">
-                               <span className="text-3xl mr-3">{task.icon}</span>
+                       <div key={task.id} className="bg-white p-5 rounded-3xl border-2 border-slate-100 flex justify-between items-center shadow-md active:bg-slate-50 transition-colors">
+                           <button onClick={() => onUpdateCoins(task.value)} className="flex items-center flex-1">
+                               <span className="text-4xl mr-4 drop-shadow-sm">{task.icon}</span>
                                <div className="text-left">
-                                   <div className="font-bold text-gray-700">{task.name}</div>
-                                   <div className={`text-xs font-black ${task.value > 0 ? 'text-green-500' : 'text-red-500'}`}>{task.value > 0 ? '+' : ''}{task.value}</div>
+                                   <div className="font-black text-slate-800 text-lg">{task.name}</div>
+                                   <div className={`text-sm font-black tracking-widest ${task.value > 0 ? 'text-brand-green' : 'text-brand-pink'}`}>
+                                       {task.value > 0 ? '奖励' : '惩罚'} {Math.abs(task.value)} 金币
+                                   </div>
                                </div>
                            </button>
-                           <button onClick={() => onDeleteTask(task.id)} className="text-gray-300">×</button>
+                           <button onClick={() => onDeleteTask(task.id)} className="w-10 h-10 flex items-center justify-center text-slate-300 hover:text-red-400 text-2xl font-light">×</button>
                        </div>
                    ))}
                </div>
@@ -200,22 +202,37 @@ export const ParentDashboard: React.FC<ParentDashboardProps> = ({
            {activeTab === 'REWARDS' && (
                <div className="space-y-4">
                    {rewards.map(reward => (
-                       <div key={reward.id} className="bg-white p-4 rounded-2xl border flex justify-between items-center">
-                           <div className="font-bold text-gray-700 flex items-center">
-                               <span className="mr-2">{reward.icon}</span> {reward.name} ({reward.cost})
+                       <div key={reward.id} className="bg-white p-5 rounded-3xl border-2 border-slate-100 flex justify-between items-center shadow-md">
+                           <div className="font-black text-slate-800 flex items-center text-lg">
+                               <span className="text-3xl mr-3">{reward.icon}</span> 
+                               <div>
+                                   <div>{reward.name}</div>
+                                   <div className="text-xs text-yellow-600 font-bold tracking-widest uppercase">售价 {reward.cost} 金币</div>
+                               </div>
                            </div>
-                           <button onClick={() => onDeleteReward(reward.id)} className="text-red-400 font-bold">删除</button>
+                           <button onClick={() => onDeleteReward(reward.id)} className="text-red-400 font-black text-sm bg-red-50 px-4 py-2 rounded-xl">下架</button>
                        </div>
                    ))}
                </div>
            )}
 
            {activeTab === 'SETTINGS' && (
-               <div className="bg-white p-6 rounded-3xl border">
-                   <h3 className="font-bold mb-4">修改 PIN 码</h3>
-                   <input maxLength={4} onChange={e => { if(e.target.value.length === 4) onUpdatePin(e.target.value); }} placeholder="输入 4 位新密码" className="w-full p-3 bg-gray-50 rounded-xl mb-4 text-center text-2xl tracking-widest font-black" />
+               <div className="bg-white p-8 rounded-[2.5rem] border-2 border-slate-100 shadow-xl">
+                   <h3 className="font-black text-slate-800 mb-6 text-xl text-center">修改安全验证 PIN 码</h3>
+                   <div className="space-y-4">
+                       <label className="text-xs font-black text-slate-400 uppercase tracking-widest ml-1">输入 4 位数字密码</label>
+                       <input 
+                         type="tel"
+                         maxLength={4} 
+                         onChange={e => { if(e.target.value.length === 4) { onUpdatePin(e.target.value); audio.playCorrect(); } }} 
+                         placeholder="XXXX" 
+                         className="w-full p-6 bg-slate-50 rounded-2xl text-center text-4xl tracking-[1em] font-black border-4 border-transparent focus:border-brand-blue outline-none transition-all" 
+                       />
+                       <p className="text-center text-[10px] text-slate-400 font-bold px-4">PIN 码用于家长模式验证，请妥善保管，切勿让孩子知晓。</p>
+                   </div>
                </div>
            )}
+           <div className="h-20" />
        </div>
     </div>
   );
