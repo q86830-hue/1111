@@ -1,0 +1,16 @@
+
+{
+  "pages": [
+    "pages/index/index",
+    "pages/game/game"
+  ],
+  "window": {
+    "backgroundColor": "#F0F9FF",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#4D96FF",
+    "navigationBarTitleText": "快乐数学",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom"
+  },
+  "sitemapLocation": "sitemap.json"
+}

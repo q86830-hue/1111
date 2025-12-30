@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>快乐数学 - 网页版</title>
+    
+    <!-- 基础样式和模拟环境 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      window.process = { env: { NODE_ENV: 'production' } };
+      window.global = window;
+      
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#FFD93D', orange: '#FF8400', green: '#6BCB77',
+                blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
+              }
+            },
+            fontFamily: { sans: ['"Comic Sans MS"', '"Chalkboard SE"', 'sans-serif'] },
+            keyframes: {
+              wiggle: {
+                '0%, 100%': { transform: 'rotate(-3deg)' },
+                '50%': { transform: 'rotate(3deg)' },
+              },
+              pop: {
+                '0%': { transform: 'scale(0.8)', opacity: '0' },
+                '100%': { transform: 'scale(1)', opacity: '1' },
+              },
+              'bounce-slow': {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-15px)' },
+              }
+            },
+            animation: {
+              wiggle: 'wiggle 0.3s ease-in-out infinite',
+              pop: 'pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'bounce-slow': 'bounce-slow 3s ease-in-out infinite',
+            }
+          }
+        }
+      }
+    </script>
+
+    <!-- 核心依赖：React 和 Babel -->
+    <script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom": "https://esm.sh/react-dom@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/"
+  }
+}
+</script>
+    
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
+      Babel.registerPreset("tsx", {
+        presets: [
+          [Babel.availablePresets["typescript"], { allExtensions: true, isTSX: true }],
+          [Babel.availablePresets["react"]]
+        ]
+      });
+    </script>
+
+    <style>
+      /* 修复移动端 100vh 问题并禁用页面橡皮筋回弹 */
+      html, body { 
+        height: 100%; 
+        width: 100%; 
+        margin: 0; 
+        padding: 0; 
+        overflow: hidden; 
+        background-color: #f0f9ff;
+        -webkit-overflow-scrolling: touch;
+      }
+      #root { height: 100%; width: 100%; }
+      #error-overlay {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; padding: 20px;
+        background: #fee2e2; color: #991b1b; font-family: monospace; z-index: 10000;
+        border-bottom: 2px solid #ef4444; word-break: break-all;
+      }
+    </style>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="error-overlay"></div>
+    <div id="root"></div>
+
+    <script>
+      window.onerror = function(msg, url, line, col, error) {
+        const overlay = document.getElementById('error-overlay');
+        if (overlay) {
+          overlay.style.display = 'block';
+          overlay.innerHTML = `<strong>运行错误:</strong><br>${msg}<br><small>位置: ${url}:${line}</small>`;
+        }
+        return false;
+      };
+    </script>
+
+    <script type="text/babel" data-type="module" data-presets="tsx" src="./index.tsx"></script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
