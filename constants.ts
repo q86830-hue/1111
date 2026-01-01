@@ -7,27 +7,39 @@ export interface CurriculumItem {
   title: string;
   type: GameType;
   theme: LevelTheme;
-  constraints?: {
-    max?: number;
-    min?: number;
-    fixedQuestion?: string;
-  };
 }
 
 export const PEP_CURRICULUM: Record<number, CurriculumItem[]> = {
   1: [
-    { id: 1, unit: "一上 U1", title: "准备课：数一数", type: GameType.COUNTING, theme: LevelTheme.FOREST, constraints: { max: 10 } },
-    { id: 2, unit: "一上 U2", title: "位置：上下左右", type: GameType.POSITIONING, theme: LevelTheme.CITY },
-    { id: 3, unit: "一上 U3", title: "1-5的认识和加减法", type: GameType.DECOMPOSITION, theme: LevelTheme.OCEAN, constraints: { max: 5 } },
-    { id: 4, unit: "一上 U4", title: "认识立体图形", type: GameType.SHAPES_3D, theme: LevelTheme.CITY },
-    { id: 5, unit: "一上 U5", title: "6-10的认识和加减法", type: GameType.ADDITION, theme: LevelTheme.FOREST, constraints: { min: 6, max: 10 } },
-    { id: 6, unit: "一上 U6", title: "11-20各数的认识", type: GameType.PLACE_VALUE, theme: LevelTheme.SPACE, constraints: { min: 11, max: 20 } },
-    { id: 7, unit: "一上 U7", title: "认识钟表：整时", type: GameType.CLOCK, theme: LevelTheme.DETECTIVE },
-    { id: 8, unit: "一上 U8", title: "20以内的进位加法", type: GameType.MAKE_TEN, theme: LevelTheme.SPACE, constraints: { max: 20 } }
+    { id: 1, unit: "数一数", title: "美丽的校园", type: GameType.COUNTING, theme: LevelTheme.FOREST },
+    { id: 2, unit: "分与合", title: "数字拆拆乐", type: GameType.DECOMPOSITION, theme: LevelTheme.FOREST },
+    { id: 3, unit: "20内加减", title: "口算小达人", type: GameType.ADDITION, theme: LevelTheme.FOREST },
+    { id: 4, unit: "认识钟表", title: "时间滴答滴", type: GameType.CLOCK, theme: LevelTheme.FOREST }
   ],
   2: [
-    { id: 1, unit: "二上 U1", title: "长度单位：厘米/米", type: GameType.MEASUREMENT, theme: LevelTheme.FOREST },
-    { id: 2, unit: "二上 U2", title: "100以内加法和减法", type: GameType.ADDITION, theme: LevelTheme.CITY, constraints: { max: 100 } }
+    { id: 1, unit: "长度单位", title: "量一量", type: GameType.MEASUREMENT, theme: LevelTheme.FOREST },
+    { id: 2, unit: "表内乘法", title: "九九乘法表", type: GameType.MULTIPLICATION, theme: LevelTheme.FOREST },
+    { id: 3, unit: "角的认识", title: "小小角大秘密", type: GameType.ANGLES, theme: LevelTheme.FOREST }
+  ],
+  3: [
+    { id: 1, unit: "时分秒", title: "时间单位转换", type: GameType.CLOCK, theme: LevelTheme.OCEAN },
+    { id: 2, unit: "周长计算", title: "围篱笆", type: GameType.PERIMETER, theme: LevelTheme.OCEAN },
+    { id: 3, unit: "分数初步", title: "分饼游戏", type: GameType.FRACTION, theme: LevelTheme.OCEAN }
+  ],
+  4: [
+    { id: 1, unit: "大数的认识", title: "万以上的世界", type: GameType.PLACE_VALUE, theme: LevelTheme.OCEAN },
+    { id: 2, unit: "角的度量", title: "量角器用法", type: GameType.ANGLES, theme: LevelTheme.OCEAN },
+    { id: 3, unit: "平行与垂直", title: "线与线的关系", type: GameType.ORIENTATION, theme: LevelTheme.OCEAN }
+  ],
+  5: [
+    { id: 1, unit: "小数乘法", title: "点点变变变", type: GameType.MULTIPLICATION, theme: LevelTheme.SPACE },
+    { id: 2, unit: "简易方程", title: "寻找未知数X", type: GameType.ADDITION, theme: LevelTheme.SPACE },
+    { id: 3, unit: "多边形面积", title: "土地测量", type: GameType.AREA, theme: LevelTheme.SPACE }
+  ],
+  6: [
+    { id: 1, unit: "分数除法", title: "倒数的力量", type: GameType.DIVISION, theme: LevelTheme.SPACE },
+    { id: 2, unit: "圆的知识", title: "圆周率探秘", type: GameType.AREA, theme: LevelTheme.SPACE },
+    { id: 3, unit: "百分数", title: "生活中的占比", type: GameType.DECIMAL, theme: LevelTheme.SPACE }
   ]
 };
 

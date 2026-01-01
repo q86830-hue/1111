@@ -25,6 +25,7 @@ export enum GameType {
   CLOCK = 'CLOCK',             
   MAKE_TEN = 'MAKE_TEN',       
   MULTIPLICATION = 'MULTIPLICATION', 
+  DIVISION = 'DIVISION',
   FRACTION = 'FRACTION',       
   AREA = 'AREA',               
   DECIMAL = 'DECIMAL',         
@@ -32,7 +33,7 @@ export enum GameType {
   RATIO = 'RATIO',             
   PERIMETER = 'PERIMETER',
   MEASUREMENT = 'MEASUREMENT',
-  STATISTICS = 'STATISTICS' // 新增统计学类型
+  STATISTICS = 'STATISTICS'
 }
 
 export enum LevelTheme {

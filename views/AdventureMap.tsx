@@ -1,86 +1,104 @@
 
-import React from 'react';
-import { Button } from '../components/Button';
-import { AppView, LevelData } from '../types';
-import { ArrowLeftIcon, StarIcon, HeartIcon, CoinIcon } from '../components/Icons';
-import { PEP_CURRICULUM } from '../constants';
+import React, { useState } from 'react';
+import { ArrowLeftIcon, HeartIcon } from '../components/Icons';
+import { audio } from '../utils/audio';
 
 interface AdventureMapProps {
-  levels: LevelData[];
   selectedGrade: number;
-  onSelectLevel: (levelId: number) => void;
+  onSelectLevel: (slotId: number) => void;
   onBack: () => void;
   lives: number;
   coins: number;
+  onRefreshMap: () => void;
+  pageIndex: number;
 }
 
 export const AdventureMap: React.FC<AdventureMapProps> = ({ 
-  levels, 
   selectedGrade, 
   onSelectLevel, 
   onBack,
   lives,
-  coins
+  onRefreshMap,
+  pageIndex
 }) => {
-  const units = PEP_CURRICULUM[selectedGrade] || [];
-  
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleMagicRefresh = () => {
+    if (isRefreshing) return;
+    audio.playClick();
+    setIsRefreshing(true);
+    onRefreshMap();
+    setTimeout(() => setIsRefreshing(false), 800);
+  };
+
+  const slots = Array.from({ length: 20 }, (_, i) => i + 1);
+
+  const getThemeColor = () => {
+    if (selectedGrade <= 2) return 'bg-[#F0FDF4]'; 
+    if (selectedGrade <= 4) return 'bg-[#F0F9FF]'; 
+    return 'bg-[#F5F3FF]'; 
+  };
+
+  const getBorderColor = () => {
+    if (selectedGrade <= 2) return 'border-green-100';
+    if (selectedGrade <= 4) return 'border-blue-100';
+    return 'border-purple-100';
+  };
+
   return (
-    <div className="h-full w-full bg-blue-50/30 flex flex-col overflow-hidden pt-safe pb-safe">
-      <div className="p-4 bg-white/80 backdrop-blur-md shadow-sm z-20 sticky top-0 mx-4 mt-2 rounded-3xl border border-white/50">
-        <div className="flex justify-between items-center">
-            <div className="flex items-center">
-                <Button variant="neutral" size="sm" onClick={onBack} className="mr-3 w-10 h-10 p-0 flex items-center justify-center rounded-full">
-                    <ArrowLeftIcon size={20} />
-                </Button>
-                <h2 className="text-lg font-black text-gray-800">{selectedGrade}年级 · 知识冒险</h2>
-            </div>
-            <div className="flex space-x-2">
-                 <div className="flex items-center bg-brand-pink/10 px-3 py-1.5 rounded-full border border-brand-pink/20">
-                    <HeartIcon filled size={16} className="mr-1 text-brand-pink" />
-                    <span className="font-black text-sm text-brand-pink">{lives}</span>
-                 </div>
-                 <div className="flex items-center bg-brand-yellow/10 px-3 py-1.5 rounded-full border border-brand-yellow/20">
-                    <CoinIcon size={16} className="mr-1" />
-                    <span className="font-black text-sm text-yellow-700">{coins}</span>
-                 </div>
-            </div>
+    <div className={`h-full w-full ${getThemeColor()} flex flex-col overflow-hidden relative transition-colors duration-500`}>
+      <div className="pt-safe px-4 pb-4 bg-white/90 backdrop-blur-md shadow-sm z-50 rounded-b-[2rem] flex items-center justify-between border-b border-slate-50">
+        <div className="flex items-center">
+          <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 border border-slate-100 active:scale-90 transition-all">
+            <ArrowLeftIcon size={18} />
+          </button>
+          <div className="ml-3">
+            <h2 className="text-lg font-black text-slate-800 leading-tight">{selectedGrade}年级 · 同步练习</h2>
+            <p className="text-[8px] font-black text-brand-blue uppercase tracking-tighter opacity-40">PEP CURRICULUM POOL</p>
+          </div>
+        </div>
+
+        <div className="flex items-center space-x-2">
+          <button 
+            onClick={handleMagicRefresh}
+            disabled={isRefreshing}
+            className={`w-12 h-12 rounded-full bg-brand-blue text-white shadow-lg border-2 border-white flex flex-col items-center justify-center active:scale-95 transition-all ${isRefreshing ? 'animate-spin opacity-50' : ''}`}
+          >
+            <span className="text-base leading-none mb-0.5">✨</span>
+            <span className="text-[9px] font-black leading-none whitespace-nowrap">换一批</span>
+          </button>
+
+          <div className="flex items-center bg-slate-50 px-3 py-1.5 rounded-2xl border border-slate-100">
+            <HeartIcon filled size={16} className="mr-1 text-brand-pink" />
+            <span className="font-black text-base text-slate-700">{lives}</span>
+          </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-8 md:p-12 relative overscroll-contain">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {units.map((unit, index) => (
+      <div className={`flex-1 overflow-y-auto px-5 py-6 no-scrollbar transition-all duration-500 ${isRefreshing ? 'opacity-30 blur-sm scale-95' : 'opacity-100 scale-100'}`}>
+        <div className="max-w-md mx-auto grid grid-cols-4 gap-4 pb-24">
+          {slots.map(id => (
             <button
-              key={unit.id}
-              onClick={() => onSelectLevel(100 * selectedGrade + unit.id)}
-              className="group relative bg-white p-6 rounded-[2.5rem] shadow-xl border-4 border-white hover:border-brand-blue transition-all active:scale-95 text-left overflow-hidden min-h-[140px] flex flex-col justify-center"
+              key={id}
+              onClick={() => { audio.playClick(); onSelectLevel(id); }}
+              className={`aspect-[4/5] bg-white rounded-[1.5rem] flex flex-col items-center justify-center border-2 ${getBorderColor()} transition-all duration-300 relative group shadow-sm active:shadow-inner active:translate-y-1`}
             >
-              <div className="flex justify-between items-start mb-4">
-                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-inner border-b-4 border-black/10
-                  ${index % 3 === 0 ? 'bg-blue-100' : index % 3 === 1 ? 'bg-green-100' : 'bg-purple-100'}
-                `}>
-                  {unit.id}
-                </div>
-                <div className="bg-slate-100 px-3 py-1 rounded-full text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{unit.unit}</div>
-              </div>
-              <h3 className="text-xl font-black text-gray-800 mb-1 leading-tight">{unit.title}</h3>
-              <p className="text-[10px] text-brand-blue font-black uppercase tracking-wider opacity-60">点击进入挑战</p>
-              
-              <div className="absolute -right-4 -bottom-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                <CoinIcon size={80} />
+              <span className="text-2xl font-black text-slate-700 group-hover:text-brand-blue">{id}</span>
+              <div className="mt-1 flex space-x-0.5">
+                 <div className="w-1.5 h-1.5 rounded-full bg-brand-yellow"></div>
+                 <div className="w-1.5 h-1.5 rounded-full bg-slate-100"></div>
+                 <div className="w-1.5 h-1.5 rounded-full bg-slate-100"></div>
               </div>
             </button>
           ))}
         </div>
-        
-        {units.length === 0 && (
-          <div className="text-center py-24">
-            <div className="text-6xl mb-4 grayscale opacity-30">🚧</div>
-            <div className="text-gray-400 font-black text-lg">新关卡正在搭建中...</div>
-          </div>
-        )}
+      </div>
 
-        <div className="h-20 w-full" />
+      <div className="fixed bottom-6 left-0 right-0 z-40 flex justify-center px-8 pointer-events-none">
+        <div className="bg-white/95 backdrop-blur-xl px-8 py-3 rounded-full border border-slate-100 shadow-xl flex items-center space-x-3 w-full max-w-xs animate-pop">
+          <div className="text-xl animate-bounce">🎯</div>
+          <p className="text-[10px] font-black text-brand-blue leading-tight tracking-tight">已同步人教版 {selectedGrade} 年级核心考点</p>
+        </div>
       </div>
     </div>
   );

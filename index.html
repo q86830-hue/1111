@@ -6,16 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
-    <!-- 1. 预加载核心库，确保网络优先级 -->
-    <link rel="modulepreload" href="https://esm.sh/react@19.0.0" crossorigin="anonymous" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0" crossorigin="anonymous" />
+    <!-- 预加载核心依赖，提升网络加载优先级 -->
+    <link rel="modulepreload" href="https://esm.sh/react@19.0.0?bundle" />
+    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0?bundle" />
 
-    <!-- 2. Tailwind 配置 -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script crossorigin="anonymous">
+    <script>
       window.process = { env: { NODE_ENV: 'production' } };
-      window.global = window;
-      
       tailwind.config = {
         theme: {
           extend: {
@@ -25,7 +22,7 @@
                 blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
               }
             },
-            fontFamily: { sans: ['"Comic Sans MS"', '"Chalkboard SE"', '"Microsoft YaHei"', 'sans-serif'] },
+            fontFamily: { sans: ['"Comic Sans MS"', 'system-ui', 'sans-serif'] },
             keyframes: {
               wiggle: { '0%, 100%': { transform: 'rotate(-2deg)' }, '50%': { transform: 'rotate(2deg)' } },
               pop: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } }
@@ -40,22 +37,20 @@
       }
     </script>
 
-    <!-- 3. 核心：修复 Import Map，确保模块能正确解析 -->
     <script type="importmap">
 {
   "imports": {
-    "react": "https://esm.sh/react@19.0.0",
-    "react-dom": "https://esm.sh/react-dom@19.0.0",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react": "https://esm.sh/react@19.0.0?bundle",
+    "react-dom": "https://esm.sh/react-dom@19.0.0?bundle",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?bundle",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
     
-    <!-- 4. Babel 编译器 -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin="anonymous"></script>
-    <script crossorigin="anonymous">
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script>
       Babel.registerPreset("tsx", {
         presets: [
           [Babel.availablePresets["typescript"], { allExtensions: true, isTSX: true }],
@@ -66,48 +61,32 @@
 
     <style>
       :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
-      html, body { height: 100dvh; width: 100vw; margin: 0; padding: 0; overflow: hidden; background-color: #f0f9ff; touch-action: manipulation; }
+      html, body { 
+        height: 100dvh; width: 100vw; margin: 0; padding: 0; 
+        overflow: hidden; background-color: #f0f9ff; 
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
+      }
       #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
-      .pt-safe { padding-top: max(1rem, var(--sat)); }
-      .pb-safe { padding-bottom: max(1rem, var(--sab)); }
-      #error-overlay { display: none; position: fixed; inset: 0; background: white; z-index: 10000; padding: 2rem; font-family: sans-serif; overflow: auto; }
+      .pt-safe { padding-top: max(0.75rem, var(--sat)); }
+      .pb-safe { padding-bottom: max(0.75rem, var(--sab)); }
+      .no-scrollbar::-webkit-scrollbar { display: none; }
+      
+      /* 骨架屏加载动画 */
       .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #f0f9ff; }
-      .pencil-loader { font-size: 64px; animation: writing 1.5s infinite ease-in-out; }
-      @keyframes writing { 0%, 100% { transform: translate(0,0) rotate(0deg); } 50% { transform: translate(20px, -10px) rotate(10deg); } }
+      .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
+      @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <div id="error-overlay"></div>
     <div id="root">
       <div class="loader-container">
-        <div class="pencil-loader mb-6">✏️</div>
-        <div class="text-2xl font-black text-brand-blue animate-pulse">数学魔法布置中...</div>
+        <div class="pencil-loader mb-4">✏️</div>
+        <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest">数学魔法布置中...</div>
       </div>
     </div>
-
-    <script crossorigin="anonymous">
-      window.onerror = function(msg, url, line, col, error) {
-        const overlay = document.getElementById('error-overlay');
-        if (overlay) {
-          overlay.style.display = 'block';
-          overlay.innerHTML = `
-            <div style="max-width: 400px; margin: 5rem auto; text-align: center;">
-              <div style="font-size: 80px;">😵</div>
-              <h2 style="font-weight: 900; color: #1f2937; font-size: 1.5rem; margin: 1rem 0;">模块加载失败</h2>
-              <div style="text-align: left; background: #fef2f2; padding: 1rem; border-radius: 1rem; font-size: 0.75rem; color: #b91c1c; border: 1px solid #fecaca; margin-bottom: 2rem;">
-                <strong>详情：</strong>${msg}<br><strong>位置：</strong>${line}行
-              </div>
-              <button onclick="location.reload()" style="width: 100%; padding: 1rem; border: none; background: #4D96FF; color: white; border-radius: 1rem; font-weight: bold; cursor: pointer;">点击重试魔法</button>
-            </div>
-          `;
-        }
-        return false;
-      };
-    </script>
-
-    <!-- 5. 确保 index.tsx 作为 type="module" 加载 -->
-    <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx" crossorigin="anonymous"></script>
+    <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx"></script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
