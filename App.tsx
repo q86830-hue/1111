@@ -1,14 +1,14 @@
 
 import React, { useState, useCallback } from 'react';
-import { Home } from './views/Home';
-import { AdventureMap } from './views/AdventureMap';
-import { GameLevel } from './views/GameLevel';
-import { Tools } from './views/Tools';
-import { MakeTenTool } from './views/MakeTenTool';
-import { ParentDashboard } from './views/ParentDashboard';
-import { AppView, LevelData } from './types';
-import { generateLevelFromPool } from './utils/QuestionBank';
-import { audio } from './utils/audio';
+import { Home } from './views/Home.tsx';
+import { AdventureMap } from './views/AdventureMap.tsx';
+import { GameLevel } from './views/GameLevel.tsx';
+import { Tools } from './views/Tools.tsx';
+import { MakeTenTool } from './views/MakeTenTool.tsx';
+import { ParentDashboard } from './views/ParentDashboard.tsx';
+import { AppView, LevelData } from './types.ts';
+import { generateLevelFromPool } from './utils/QuestionBank.ts';
+import { audio } from './utils/audio.ts';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
