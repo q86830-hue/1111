@@ -1,14 +1,14 @@
 
-import React, { useState, useCallback } from 'react';
-import { Home } from './views/Home.tsx';
-import { AdventureMap } from './views/AdventureMap.tsx';
-import { GameLevel } from './views/GameLevel.tsx';
-import { Tools } from './views/Tools.tsx';
-import { MakeTenTool } from './views/MakeTenTool.tsx';
-import { ParentDashboard } from './views/ParentDashboard.tsx';
-import { AppView, LevelData } from './types.ts';
-import { generateLevelFromPool } from './utils/QuestionBank.ts';
-import { audio } from './utils/audio.ts';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Home } from './views/Home';
+import { AdventureMap } from './views/AdventureMap';
+import { GameLevel } from './views/GameLevel';
+import { Tools } from './views/Tools';
+import { MakeTenTool } from './views/MakeTenTool';
+import { ParentDashboard } from './views/ParentDashboard';
+import { AppView, LevelData, Reward, Task } from './types';
+import { generateLevelFromPool } from './utils/QuestionBank';
+import { audio } from './utils/audio';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -21,6 +21,16 @@ const App: React.FC = () => {
   
   const [pageIndex, setPageIndex] = useState(0);
   const [currentSlotId, setCurrentSlotId] = useState(1);
+  
+  const [rewards, setRewards] = useState<Reward[]>([
+    { id: '1', name: '看一集动画片', cost: 200, icon: '📺' },
+    { id: '2', name: '吃一个冰淇淋', cost: 150, icon: '🍦' },
+    { id: '3', name: '去公园玩', cost: 300, icon: '🎡' }
+  ]);
+  const [tasks, setTasks] = useState<Task[]>([
+    { id: '1', name: '自己收拾书包', value: 20, icon: '🎒' },
+    { id: '2', name: '帮妈妈洗菜', value: 15, icon: '🥬' }
+  ]);
 
   const updateCoins = useCallback((amount: number) => {
     setCoins(prev => Math.max(0, prev + amount));
@@ -135,12 +145,12 @@ const App: React.FC = () => {
           onBack={() => setCurrentView(AppView.HOME)} 
           coins={coins}
           onUpdateCoins={updateCoins}
-          rewards={[]}
-          onAddReward={() => {}}
-          onDeleteReward={() => {}}
-          tasks={[]}
-          onAddTask={() => {}}
-          onDeleteTask={() => {}}
+          rewards={rewards}
+          onAddReward={(r) => setRewards(prev => [...prev, r])}
+          onDeleteReward={(id) => setRewards(prev => prev.filter(r => r.id !== id))}
+          tasks={tasks}
+          onAddTask={(t) => setTasks(prev => [...prev, t])}
+          onDeleteTask={(id) => setTasks(prev => prev.filter(t => t.id !== id))}
           isParentMode={isParentMode}
           parentPin={parentPin}
           onUpdatePin={(pin) => setParentPin(pin)}
