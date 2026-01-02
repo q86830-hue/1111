@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
-    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       window.process = { env: { NODE_ENV: 'production' } };
@@ -33,7 +32,6 @@
       }
     </script>
 
-    <!-- 统一 Import Map，确保 React 19 唯一实例 -->
     <script type="importmap">
 {
   "imports": {
@@ -47,7 +45,6 @@
 }
 </script>
     
-    <!-- Babel 用于浏览器端编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script>
       Babel.registerPreset("tsx", {
@@ -80,13 +77,10 @@
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <!-- 加载动画层 -->
     <div id="app-loader" class="loader-container">
       <div class="pencil-loader mb-4">✏️</div>
       <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center">数学魔法召唤中...</div>
     </div>
-
-    <!-- React 挂载点 -->
     <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>

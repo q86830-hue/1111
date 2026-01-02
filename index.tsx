@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AppView, LevelData } from './types.ts';
+import { AppView, LevelData, Reward, Task } from './types.ts';
 import { Home } from './views/Home.tsx';
 import { AdventureMap } from './views/AdventureMap.tsx';
 import { GameLevel } from './views/GameLevel.tsx';
@@ -22,13 +22,12 @@ const App: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [currentSlotId, setCurrentSlotId] = useState(1);
 
-  // 模拟持久化奖励数据
-  const [rewards, setRewards] = useState([
+  const [rewards, setRewards] = useState<Reward[]>([
     { id: '1', name: '看一集动画片', cost: 200, icon: '📺' },
     { id: '2', name: '吃一个冰淇淋', cost: 150, icon: '🍦' },
     { id: '3', name: '去公园玩', cost: 300, icon: '🎡' }
   ]);
-  const [tasks, setTasks] = useState([
+  const [tasks, setTasks] = useState<Task[]>([
     { id: '1', name: '自己收拾书包', value: 20, icon: '🎒' },
     { id: '2', name: '帮妈妈洗菜', value: 15, icon: '🥬' }
   ]);
@@ -162,17 +161,14 @@ const App: React.FC = () => {
   );
 };
 
-// 执行挂载
 const container = document.getElementById('root');
 if (container) {
   const root = createRoot(container);
   root.render(<App />);
-  
-  // 渲染完成后隐藏加载器
   setTimeout(() => {
     const loader = document.getElementById('app-loader');
     if (loader) loader.classList.add('hidden');
-  }, 500);
+  }, 800);
 }
 
 export default App;
