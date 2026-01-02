@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
-import { AppView, LevelData, Reward, Task } from './types.ts';
-import { Home } from './views/Home.tsx';
-import { AdventureMap } from './views/AdventureMap.tsx';
-import { GameLevel } from './views/GameLevel.tsx';
-import { Tools } from './views/Tools.tsx';
-import { MakeTenTool } from './views/MakeTenTool.tsx';
-import { ParentDashboard } from './views/ParentDashboard.tsx';
-import { generateLevelFromPool } from './utils/QuestionBank.ts';
-import { audio } from './utils/audio.ts';
+import { AppView, LevelData, Reward, Task } from './types';
+import { Home } from './views/Home';
+import { AdventureMap } from './views/AdventureMap';
+import { GameLevel } from './views/GameLevel';
+import { Tools } from './views/Tools';
+import { MakeTenTool } from './views/MakeTenTool';
+import { ParentDashboard } from './views/ParentDashboard';
+import { generateLevelFromPool } from './utils/QuestionBank';
+import { audio } from './utils/audio';
 
 const App: React.FC = () => {
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
@@ -31,6 +31,16 @@ const App: React.FC = () => {
     { id: '1', name: '自己收拾书包', value: 20, icon: '🎒' },
     { id: '2', name: '帮妈妈洗菜', value: 15, icon: '🥬' }
   ]);
+
+  useEffect(() => {
+    // Component is mounted, try to hide loader after a short delay
+    const hideLoader = () => {
+      const loader = document.getElementById('app-loader');
+      if (loader) loader.classList.add('hidden');
+    };
+    const timer = setTimeout(hideLoader, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const updateCoins = useCallback((amount: number) => {
     setCoins(prev => Math.max(0, prev + amount));
@@ -147,11 +157,11 @@ const App: React.FC = () => {
           coins={coins}
           onUpdateCoins={updateCoins}
           rewards={rewards}
-          onAddReward={(r) => setRewards([...rewards, r])}
-          onDeleteReward={(id) => setRewards(rewards.filter(r => r.id !== id))}
+          onAddReward={(r) => setRewards(prev => [...prev, r])}
+          onDeleteReward={(id) => setRewards(prev => prev.filter(r => r.id !== id))}
           tasks={tasks}
-          onAddTask={(t) => setTasks([...tasks, t])}
-          onDeleteTask={(id) => setTasks(tasks.filter(t => t.id !== id))}
+          onAddTask={(t) => setTasks(prev => [...prev, t])}
+          onDeleteTask={(id) => setTasks(prev => prev.filter(t => t.id !== id))}
           isParentMode={isParentMode}
           parentPin={parentPin}
           onUpdatePin={(pin) => setParentPin(pin)}
@@ -165,10 +175,6 @@ const container = document.getElementById('root');
 if (container) {
   const root = createRoot(container);
   root.render(<App />);
-  setTimeout(() => {
-    const loader = document.getElementById('app-loader');
-    if (loader) loader.classList.add('hidden');
-  }, 800);
 }
 
 export default App;
