@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
-    <!-- 预加载唯一版本的 React 核心 -->
-    <link rel="modulepreload" href="https://esm.sh/react@19.0.0?bundle" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client?bundle&external=react" />
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       window.process = { env: { NODE_ENV: 'production' } };
@@ -36,7 +32,6 @@
       }
     </script>
 
-    <!-- 核心修复：统一 Import Map。移除所有多余版本映射，防止 Hooks 报错 -->
     <script type="importmap">
 {
   "imports": {
@@ -44,13 +39,11 @@
     "react-dom": "https://esm.sh/react-dom@19.0.0?bundle&external=react",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?bundle&external=react",
     "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime?bundle",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
     
-    <!-- Babel 用于实时编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script>
       Babel.registerPreset("tsx", {
@@ -59,13 +52,11 @@
           [Babel.availablePresets["react"], { runtime: "automatic" }]
         ]
       });
-
-      // 增强错误捕捉，将错误显示在界面上以便调试
       window.onerror = function(message, source, lineno, colno, error) {
         const debug = document.getElementById('debug-info');
         if (debug) {
           debug.innerHTML = `<div class="text-red-500 font-bold">错误: ${message}</div>
-                             <div class="text-[8px] opacity-50">${source || 'internal'}:${lineno || '0'}</div>`;
+                             <div class="text-[8px] opacity-50">${source || 'internal'}:${lineno || '0'}:${colno || '0'}</div>`;
         }
         return false;
       };
@@ -105,30 +96,25 @@
     <script type="text/babel" data-type="module" data-presets="tsx">
       import React from 'react';
       import { createRoot } from 'react-dom/client';
+      import App from './index.tsx';
       
-      async function startApp() {
-        try {
-          // 异步加载主组件
-          const { default: App } = await import('./App.tsx');
-          const container = document.getElementById('root');
-          if (container) {
-            const root = createRoot(container);
-            root.render(<App />);
-            
-            // 成功渲染后移除加载界面
-            setTimeout(() => {
-              const loader = document.getElementById('app-loader');
-              if (loader) loader.classList.add('hidden');
-            }, 800);
-          }
-        } catch (err) {
-          console.error('应用启动失败:', err);
-          const debug = document.getElementById('debug-info');
-          if (debug) debug.innerText = '加载模块失败: ' + err.message;
+      try {
+        const container = document.getElementById('root');
+        if (container) {
+          const root = createRoot(container);
+          root.render(<App />);
+          
+          // Hide loader after mount
+          setTimeout(() => {
+            const loader = document.getElementById('app-loader');
+            if (loader) loader.classList.add('hidden');
+          }, 800);
         }
+      } catch (err) {
+        console.error('Render error:', err);
+        const debug = document.getElementById('debug-info');
+        if (debug) debug.innerText = '启动失败: ' + err.message;
       }
-
-      startApp();
     </script>
   <script type="module" src="/index.tsx"></script>
 </body>
