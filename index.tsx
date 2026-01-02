@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { AppView, GameType, LevelTheme, LevelData } from './types.ts';
+import React, { useState, useCallback, useEffect } from 'react';
+import { createRoot } from 'react-dom/client';
+import { AppView, LevelData } from './types.ts';
 import { Home } from './views/Home.tsx';
 import { AdventureMap } from './views/AdventureMap.tsx';
 import { GameLevel } from './views/GameLevel.tsx';
@@ -21,7 +22,7 @@ const App: React.FC = () => {
   const [pageIndex, setPageIndex] = useState(0);
   const [currentSlotId, setCurrentSlotId] = useState(1);
 
-  // Rewards and tasks state (normally fetched from storage)
+  // 模拟持久化奖励数据
   const [rewards, setRewards] = useState([
     { id: '1', name: '看一集动画片', cost: 200, icon: '📺' },
     { id: '2', name: '吃一个冰淇淋', cost: 150, icon: '🍦' },
@@ -68,7 +69,7 @@ const App: React.FC = () => {
   };
 
   const handleGlobalRefresh = () => {
-      setPageIndex(prev => prev + 1);
+    setPageIndex(prev => prev + 1);
   };
 
   const handleComplete = (levelId: number, stars: number) => {
@@ -160,5 +161,18 @@ const App: React.FC = () => {
     </div>
   );
 };
+
+// 执行挂载
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(<App />);
+  
+  // 渲染完成后隐藏加载器
+  setTimeout(() => {
+    const loader = document.getElementById('app-loader');
+    if (loader) loader.classList.add('hidden');
+  }, 500);
+}
 
 export default App;

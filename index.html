@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
+    <!-- 引入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       window.process = { env: { NODE_ENV: 'production' } };
@@ -32,6 +33,7 @@
       }
     </script>
 
+    <!-- 统一 Import Map，确保 React 19 唯一实例 -->
     <script type="importmap">
 {
   "imports": {
@@ -39,11 +41,13 @@
     "react-dom": "https://esm.sh/react-dom@19.0.0?bundle&external=react",
     "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?bundle&external=react",
     "react/jsx-runtime": "https://esm.sh/react@19.0.0/jsx-runtime?bundle",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/"
   }
 }
 </script>
     
+    <!-- Babel 用于浏览器端编译 TSX -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script>
       Babel.registerPreset("tsx", {
@@ -52,14 +56,6 @@
           [Babel.availablePresets["react"], { runtime: "automatic" }]
         ]
       });
-      window.onerror = function(message, source, lineno, colno, error) {
-        const debug = document.getElementById('debug-info');
-        if (debug) {
-          debug.innerHTML = `<div class="text-red-500 font-bold">错误: ${message}</div>
-                             <div class="text-[8px] opacity-50">${source || 'internal'}:${lineno || '0'}:${colno || '0'}</div>`;
-        }
-        return false;
-      };
     </script>
 
     <style>
@@ -80,42 +76,18 @@
       .loader-container.hidden { opacity: 0; pointer-events: none; }
       .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
       @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
-      #debug-info { margin-top: 20px; font-size: 10px; color: #94a3b8; font-family: monospace; text-align: center; max-width: 80%; }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
+    <!-- 加载动画层 -->
     <div id="app-loader" class="loader-container">
       <div class="pencil-loader mb-4">✏️</div>
       <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center">数学魔法召唤中...</div>
-      <div id="debug-info">正在准备魔法教材...</div>
     </div>
 
+    <!-- React 挂载点 -->
     <div id="root"></div>
-
-    <script type="text/babel" data-type="module" data-presets="tsx">
-      import React from 'react';
-      import { createRoot } from 'react-dom/client';
-      import App from './index.tsx';
-      
-      try {
-        const container = document.getElementById('root');
-        if (container) {
-          const root = createRoot(container);
-          root.render(<App />);
-          
-          // Hide loader after mount
-          setTimeout(() => {
-            const loader = document.getElementById('app-loader');
-            if (loader) loader.classList.add('hidden');
-          }, 800);
-        }
-      } catch (err) {
-        console.error('Render error:', err);
-        const debug = document.getElementById('debug-info');
-        if (debug) debug.innerText = '启动失败: ' + err.message;
-      }
-    </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
