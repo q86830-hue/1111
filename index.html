@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh-CN">
   <head>
@@ -6,10 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>快乐数学 - 同步人教版</title>
     
-    <!-- 1. 极速预加载：在解析 JS 前并行下载核心库 -->
+    <!-- 1. 预加载核心库：减少网络往返 -->
     <link rel="modulepreload" href="https://esm.sh/react@19.0.0?bundle" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0?bundle" />
-    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client?bundle" />
+    <link rel="modulepreload" href="https://esm.sh/react-dom@19.0.0/client?bundle&external=react" />
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -38,15 +36,15 @@
       }
     </script>
 
-    <!-- 2. 修复 Import Map：确保模块名准确映射，解决 "Failed to resolve module specifier" -->
+    <!-- 2. 核心修复：importmap 强制外部化 react 依赖，防止 "Two Reacts" 错误 -->
     <script type="importmap">
 {
   "imports": {
     "react": "https://esm.sh/react@19.0.0?bundle",
-    "react-dom": "https://esm.sh/react-dom@19.0.0?bundle",
-    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?bundle",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "react/": "https://esm.sh/react@^19.2.3/"
+    "react-dom": "https://esm.sh/react-dom@19.0.0?bundle&external=react",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client?bundle&external=react",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
   }
 }
 </script>
@@ -58,6 +56,11 @@
           [Babel.availablePresets["typescript"], { allExtensions: true, isTSX: true }],
           [Babel.availablePresets["react"]]
         ]
+      });
+      // 监控加载状态
+      window.addEventListener('error', (e) => {
+        const loader = document.getElementById('debug-info');
+        if (loader) loader.innerText = '错误: ' + e.message;
       });
     </script>
 
@@ -72,24 +75,50 @@
       #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
       .pt-safe { padding-top: max(0.75rem, var(--sat)); }
       .pb-safe { padding-bottom: max(0.75rem, var(--sab)); }
-      .no-scrollbar::-webkit-scrollbar { display: none; }
       
       /* 加载骨架屏 */
-      .loader-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: #f0f9ff; }
+      .loader-container { 
+        position: fixed; inset: 0; z-index: 999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        background: #f0f9ff; transition: opacity 0.5s;
+      }
+      .loader-container.hidden { opacity: 0; pointer-events: none; }
       .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
       @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
+      #debug-info { margin-top: 20px; font-size: 10px; color: #94a3b8; font-family: monospace; }
     </style>
   <link rel="stylesheet" href="/index.css">
 </head>
   <body>
-    <div id="root">
-      <div class="loader-container">
-        <div class="pencil-loader mb-4">✏️</div>
-        <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center">数学魔法召唤中...</div>
-      </div>
+    <!-- 独立的 Loader，不放在 #root 内部，避免被 React 立即覆盖但执行失败时留白 -->
+    <div id="app-loader" class="loader-container">
+      <div class="pencil-loader mb-4">✏️</div>
+      <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center">数学魔法召唤中...</div>
+      <div id="debug-info">正在准备环境...</div>
     </div>
-    <!-- 3. 入口脚本：必须使用 data-type="module" 配合 importmap 使用 -->
-    <script type="text/babel" data-type="module" data-presets="tsx" src="index.tsx"></script>
+
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module" data-presets="tsx">
+      import React from 'react';
+      import ReactDOM from 'react-dom/client';
+      import App from './App.tsx';
+
+      try {
+        const container = document.getElementById('root');
+        if (container) {
+          const root = ReactDOM.createRoot(container);
+          root.render(<App />);
+          // 渲染后隐藏加载器
+          setTimeout(() => {
+            document.getElementById('app-loader').classList.add('hidden');
+          }, 500);
+        }
+      } catch (err) {
+        document.getElementById('debug-info').innerText = '启动失败: ' + err.message;
+        console.error(err);
+      }
+    </script>
   <script type="module" src="/index.tsx"></script>
 </body>
 </html>
