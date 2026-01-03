@@ -2,11 +2,25 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
 
+console.log('开始渲染React应用...');
+console.log('React版本:', React.version);
+
 // 渲染应用
 const container = document.getElementById('root');
 if (container) {
-  const root = createRoot(container);
-  root.render(<App />);
+  console.log('找到了root容器');
+  try {
+    const root = createRoot(container);
+    console.log('创建了React根实例');
+    root.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    );
+    console.log('React应用渲染完成');
+  } catch (error) {
+    console.error('React应用渲染失败:', error);
+  }
+} else {
+  console.error('未找到root容器');
 }
-
-// 隐藏加载动画的逻辑由CSS动画处理，不需要JavaScript
