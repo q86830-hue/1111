@@ -1,7 +1,7 @@
-import React from 'react';
-import { createRoot } from 'react-dom/client';
+// 使用CDN提供的React和React DOM
+const { React, ReactDOM } = window;
 
-// 直接渲染一个简单的组件，不依赖App组件
+// 直接渲染一个简单的组件
 const SimpleApp = () => {
   return React.createElement(
     'div',
@@ -34,8 +34,7 @@ function initApp() {
   const container = document.getElementById('root');
   if (container) {
     console.log('找到root容器，开始渲染应用...');
-    const root = createRoot(container);
-    root.render(React.createElement(SimpleApp));
+    ReactDOM.createRoot(container).render(React.createElement(SimpleApp));
     console.log('应用渲染完成');
   }
   
