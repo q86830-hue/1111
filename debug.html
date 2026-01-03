@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Debug Loading Animation</title>
+  <style>
+    .loader-container {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #f0f9ff; transition: opacity 0.5s ease-out, visibility 0.5s;
+    }
+    .loader-container.hidden {
+      opacity: 0; visibility: hidden; pointer-events: none;
+    }
+    .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
+    @keyframes writing {
+      from { transform: translate(-10px, 0) rotate(-5deg); }
+      to { transform: translate(10px, -5px) rotate(15deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="app-loader" class="loader-container">
+    <div class="pencil-loader mb-4">✏️</div>
+    <div class="text-xl font-black text-blue-500 animate-pulse tracking-widest text-center px-6">数学魔法召唤中...</div>
+  </div>
+  <div id="root">
+    <h1>应用内容已加载</h1>
+    <p>如果您看到这段文字，说明应用已经成功渲染。</p>
+  </div>
+  
+  <script>
+    // 隐藏加载动画
+    setTimeout(() => {
+      console.log('尝试隐藏加载动画...');
+      const loader = document.getElementById('app-loader');
+      console.log('加载动画元素:', loader);
+      if (loader) {
+        console.log('添加 hidden 类...');
+        loader.classList.add('hidden');
+        console.log('加载动画已隐藏');
+      }
+    }, 500);
+  </script>
+</body>
+</html>

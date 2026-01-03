@@ -11,6 +11,7 @@ import { generateLevelFromPool } from './utils/QuestionBank';
 import { audio } from './utils/audio';
 
 const App: React.FC = () => {
+  console.log('App组件开始渲染...');
   const [currentView, setCurrentView] = useState<AppView>(AppView.HOME);
   const [isParentMode, setIsParentMode] = useState(false);
   const [selectedGrade, setSelectedGrade] = useState(1);
@@ -31,6 +32,8 @@ const App: React.FC = () => {
     { id: '1', name: '自己收拾书包', value: 20, icon: '🎒' },
     { id: '2', name: '帮妈妈洗菜', value: 15, icon: '🥬' }
   ]);
+
+
 
   const updateCoins = useCallback((amount: number) => {
     setCoins(prev => Math.max(0, prev + amount));

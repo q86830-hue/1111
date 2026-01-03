@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '../components/Button';
 import { ArrowLeftIcon, HeartIcon, CoinIcon, Shapes } from '../components/Icons';
@@ -24,8 +25,6 @@ export const GameLevel: React.FC<{
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [errorShake, setErrorShake] = useState(false);
 
-  const LIVE_COST = 100;
-
   useEffect(() => {
     setSelected(null);
     setIsWrong(false);
@@ -37,19 +36,19 @@ export const GameLevel: React.FC<{
     setIsRefreshing(true);
     audio.playClick();
     onRefresh();
-    setTimeout(() => setIsRefreshing(false), 800);
+    setTimeout(() => setIsRefreshing(false), 600);
   };
 
   const checkAnswer = (val: any) => {
     if (selected !== null || showGameOver || isRefreshing) return;
     const submitted = String(val).trim();
-    const correct = String(level.config.ans).trim();
-    const isCorrect = submitted === correct;
+    const isCorrect = submitted === String(level.config.ans).trim();
     setSelected(submitted);
+
     if (isCorrect) {
       audio.playCorrect();
       onUpdateCoins(10);
-      setTimeout(() => onComplete(level.id, 3), 600);
+      setTimeout(() => onComplete(level.id, 3), 800);
     } else {
       audio.playWrong();
       setIsWrong(true);
@@ -58,7 +57,7 @@ export const GameLevel: React.FC<{
       if (currentLives <= 1) {
         setTimeout(() => setShowGameOver(true), 500);
       } else {
-        setTimeout(() => { setSelected(null); setIsWrong(false); }, 800);
+        setTimeout(() => { setSelected(null); setIsWrong(false); }, 1000);
       }
     }
   };
@@ -66,82 +65,103 @@ export const GameLevel: React.FC<{
   const renderVisuals = () => {
     if (isRefreshing) return (
       <div className="flex flex-col items-center animate-pop">
-        <div className="text-6xl mb-4 animate-spin-slow">🪄</div>
-        <p className="text-brand-blue font-black text-xs animate-pulse">正在准备题目...</p>
+        <div className="text-6xl mb-4 animate-bounce">✨</div>
+        <p className="text-brand-blue font-black text-sm animate-pulse">魔法重组中...</p>
       </div>
     );
 
-    const { visualType, count, items, total, p1, shape, pos, n1, n2 } = level.config;
+    const { visualType, count, items, total, p1, shape, animalList, n1, n2, op, hour, isHalf, r, c, emoji, num, den } = level.config;
 
     switch (visualType) {
       case "COUNT_ITEMS":
         return (
-          <div className="grid grid-cols-5 gap-3">
+          <div className="flex flex-wrap justify-center gap-3 bg-white/50 p-4 rounded-[2rem] max-w-full">
             {Array.from({ length: count }).map((_, i) => (
-              <span key={i} className="text-4xl animate-pop" style={{ animationDelay: `${i * 0.05}s` }}>
-                {items[0]}
-              </span>
+              <span key={i} className="text-3xl sm:text-4xl animate-pop" style={{ animationDelay: `${i * 0.05}s` }}>{items[0]}</span>
             ))}
           </div>
         );
-      case "DECOMP_VISUAL":
+      case "MULT_ARRAY":
         return (
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-16 h-16 rounded-full bg-brand-yellow flex items-center justify-center text-2xl font-black shadow-lg border-4 border-white">{total}</div>
-            <div className="flex space-x-12 relative">
-                <div className="absolute top-[-10px] left-1/2 -translate-x-1/2 w-20 h-0.5 bg-gray-200 -rotate-45 origin-right"></div>
-                <div className="absolute top-[-10px] left-1/2 -translate-x-1/2 w-20 h-0.5 bg-gray-200 rotate-45 origin-left"></div>
-                <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-xl font-black border-2 border-white">{p1}</div>
-                <div className="w-12 h-12 rounded-full bg-pink-100 flex items-center justify-center text-xl font-black border-2 border-dashed border-pink-300">?</div>
+          <div className="flex flex-col items-center gap-1 bg-white/30 p-4 rounded-3xl">
+            {Array.from({ length: r }).map((_, row) => (
+              <div key={row} className="flex gap-1">
+                {Array.from({ length: c }).map((_, col) => (
+                  <span key={col} className="text-2xl drop-shadow-sm animate-pop" style={{ animationDelay: `${(row * c + col) * 0.02}s` }}>{emoji}</span>
+                ))}
+              </div>
+            ))}
+          </div>
+        );
+      case "FRACTION_PIE":
+        return (
+          <div className="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full border-4 border-slate-100 shadow-xl overflow-hidden bg-white">
+            <svg viewBox="0 0 100 100" className="w-full h-full -rotate-90">
+              {Array.from({ length: den }).map((_, i) => {
+                const angle = (360 / den);
+                const startAngle = i * angle;
+                const endAngle = (i + 1) * angle;
+                const x1 = 50 + 50 * Math.cos((Math.PI * startAngle) / 180);
+                const y1 = 50 + 50 * Math.sin((Math.PI * startAngle) / 180);
+                const x2 = 50 + 50 * Math.cos((Math.PI * endAngle) / 180);
+                const y2 = 50 + 50 * Math.sin((Math.PI * endAngle) / 180);
+                const path = `M 50 50 L ${x1} ${y1} A 50 50 0 0 1 ${x2} ${y2} Z`;
+                return (
+                  <path 
+                    key={i} 
+                    d={path} 
+                    fill={i < num ? '#4D96FF' : '#F1F5F9'} 
+                    stroke="#fff" 
+                    strokeWidth="1"
+                  />
+                );
+              })}
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+               <div className="bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-black text-slate-500 shadow-sm">{num}/{den}</div>
             </div>
           </div>
         );
-      case "GEOMETRY_VISUAL":
+      case "CLOCK_VISUAL":
+        const hrPos = hour % 12;
+        const hrDeg = (hrPos * 30) + (isHalf ? 15 : 0);
+        const minDeg = isHalf ? 180 : 0;
         return (
-          <div className="flex space-x-6">
-            {shape === '长方体' && <Shapes.Rectangle size={80} color="bg-brand-blue" />}
-            {shape === '正方体' && <Shapes.Square size={80} color="bg-brand-orange" />}
-            {shape === '圆柱' && <div className="w-16 h-20 bg-brand-green rounded-[2rem] border-4 border-white shadow-md"></div>}
-            {shape === '球' && <Shapes.Circle size={80} color="bg-brand-pink" />}
+          <div className="relative w-44 h-44 sm:w-52 sm:h-52 rounded-full border-[8px] sm:border-[10px] border-slate-800 bg-white shadow-2xl flex items-center justify-center scale-95 sm:scale-100">
+             <div className="absolute inset-0 rounded-full border-[6px] border-slate-50/50 z-10"></div>
+             <div className="absolute bottom-1/2 left-1/2 w-2.5 sm:w-3 h-12 sm:h-14 bg-slate-800 rounded-full origin-bottom z-20" style={{ transform: `translateX(-50%) rotate(${hrDeg}deg)` }}></div>
+             <div className="absolute bottom-1/2 left-1/2 w-1.5 sm:w-2 h-18 sm:h-20 bg-brand-blue rounded-full origin-bottom z-20" style={{ transform: `translateX(-50%) rotate(${minDeg}deg)` }}></div>
+             <div className="w-4 h-4 sm:w-5 sm:h-5 bg-slate-800 rounded-full z-30 border-2 sm:border-4 border-white"></div>
+             {[12, 3, 6, 9].map((n, i) => (
+                <div key={n} className="absolute inset-3 sm:inset-4 text-center" style={{ transform: `rotate(${i * 90}deg)` }}>
+                    <span className="inline-block font-black text-slate-300 text-sm sm:text-lg" style={{ transform: `rotate(-${i * 90}deg)` }}>{n}</span>
+                </div>
+             ))}
           </div>
         );
-      case "POSITION_VISUAL":
+      case "ARITHMETIC_CARD":
+        const maxLen = Math.max(String(n1).length, String(n2).length);
+        const fontSize = maxLen > 2 ? 'text-2xl sm:text-4xl' : 'text-4xl sm:text-5xl';
+        const cardSize = maxLen > 2 ? 'w-20 h-24 sm:w-24 sm:h-32' : 'w-20 h-28 sm:w-24 sm:h-32';
+        
         return (
-          <div className="flex items-center space-x-4 bg-white p-4 rounded-2xl shadow-inner border border-gray-100">
-             <div className="flex flex-col items-center">
-               <span className="text-4xl">🐶</span>
-               <span className="text-[10px] font-bold text-gray-400">小狗</span>
-             </div>
-             <div className="w-8 h-0.5 bg-gray-100"></div>
-             <div className="flex flex-col items-center">
-               <span className="text-4xl">🐱</span>
-               <span className="text-[10px] font-bold text-gray-400">小猫</span>
-             </div>
-             <div className="w-8 h-0.5 bg-gray-100"></div>
-             <div className="flex flex-col items-center">
-               <span className="text-4xl">🐰</span>
-               <span className="text-[10px] font-bold text-gray-400">小兔</span>
-             </div>
-          </div>
-        );
-      case "MAKE_TEN_MINI":
-        return (
-          <div className="flex flex-col items-center">
-             <div className="grid grid-cols-5 gap-1 bg-gray-100 p-2 rounded-lg border border-gray-200 mb-4">
-                {Array.from({length: 10}).map((_, i) => (
-                  <div key={i} className="w-6 h-6 bg-white rounded flex items-center justify-center border border-dashed border-gray-300">
-                    {i < 9 && <div className="w-4 h-4 rounded-full bg-brand-blue"></div>}
-                  </div>
-                ))}
-             </div>
-             <div className="text-xl font-black text-gray-400">+</div>
-             <div className="flex space-x-1 mt-2">
-                {Array.from({length: n2}).map((_, i) => <div key={i} className="w-4 h-4 rounded-full bg-brand-green"></div>)}
-             </div>
+          <div className="flex items-center justify-center space-x-2 sm:space-x-4 animate-pop w-full max-w-full px-2">
+             <div className={`${cardSize} bg-white rounded-2xl sm:rounded-3xl shadow-lg border-t-4 sm:border-t-8 border-brand-blue flex items-center justify-center ${fontSize} font-black text-slate-800 transition-all`}>{n1}</div>
+             <div className="text-xl sm:text-3xl font-black text-slate-300">{op || "+"}</div>
+             <div className={`${cardSize} bg-white rounded-2xl sm:rounded-3xl shadow-lg border-t-4 sm:border-t-8 border-brand-green flex items-center justify-center ${fontSize} font-black text-slate-800 transition-all`}>{n2}</div>
+             <div className="text-xl sm:text-3xl font-black text-slate-300">=</div>
+             <div className={`${cardSize} bg-slate-50 rounded-2xl sm:rounded-3xl shadow-inner border-2 sm:border-4 border-dashed border-slate-200 flex items-center justify-center ${fontSize} font-black text-slate-200 transition-all`}>?</div>
           </div>
         );
       default:
-        return <span className="text-7xl">🎯</span>;
+        return (
+          <div className="flex flex-col items-center">
+             <div className="w-48 h-36 sm:w-64 sm:h-48 bg-white/80 rounded-[2rem] sm:rounded-[3rem] shadow-xl border-4 border-slate-100 flex items-center justify-center">
+                <span className="text-6xl sm:text-8xl animate-bounce">🤔</span>
+             </div>
+             <p className="mt-4 text-slate-400 font-black text-[10px] tracking-widest">请思考这道难题...</p>
+          </div>
+        );
     }
   };
 
@@ -157,58 +177,65 @@ export const GameLevel: React.FC<{
   };
 
   return (
-    <div className="flex flex-col h-full w-full bg-[#F8FAFC] pt-safe pb-safe overflow-hidden px-4">
-      <div className="w-full flex justify-between items-center mb-2 pt-2">
-        <button onClick={onBack} className="w-10 h-10 flex items-center justify-center rounded-full bg-white text-slate-400 border border-slate-100 shadow-sm active:scale-90"><ArrowLeftIcon size={18} /></button>
-        <div className="flex items-center space-x-2">
-            <button onClick={handleRefresh} className="bg-white text-brand-blue border border-brand-blue/30 px-3 py-1.5 rounded-full shadow-sm flex items-center"><span className="text-sm">♻️</span><span className="font-black text-[10px]">换一题</span></button>
-            <div className="flex items-center bg-white px-3 py-1.5 rounded-full shadow-sm border border-slate-50">
-              <HeartIcon filled className="text-brand-pink mr-1.5" size={16} />
-              <span className="font-black text-lg text-slate-700">{currentLives}</span>
+    <div className="flex flex-col h-full w-full bg-[#F8FAFC] pt-safe pb-safe overflow-hidden px-3 sm:px-4">
+      <div className="w-full flex justify-between items-center mb-3 sm:mb-4 pt-2 sm:pt-4">
+        <button onClick={onBack} className="w-10 h-10 sm:w-12 sm:h-12 flex items-center justify-center rounded-xl sm:rounded-2xl bg-white text-slate-400 border-2 border-slate-50 shadow-sm active:scale-90 transition-transform"><ArrowLeftIcon size={20} /></button>
+        <div className="flex items-center space-x-2 sm:space-x-3">
+            <button onClick={handleRefresh} className="bg-white text-brand-blue border-2 border-brand-blue/10 px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-sm flex items-center active:translate-y-1 transition-all"><span className="text-sm sm:text-lg mr-1.5 sm:mr-2">♻️</span><span className="font-black text-xs sm:text-sm">换一题</span></button>
+            <div className="flex items-center bg-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl sm:rounded-2xl shadow-sm border-2 border-slate-50">
+              <HeartIcon filled className="text-brand-pink mr-1 sm:mr-2" size={16} sm:size={20} />
+              <span className="font-black text-lg sm:text-xl text-slate-700">{currentLives}</span>
             </div>
         </div>
       </div>
       
-      <div className={`w-full max-w-sm mx-auto bg-white rounded-[2rem] p-5 shadow-xl border-2 flex-1 flex flex-col relative overflow-hidden mb-4 ${isWrong ? 'border-brand-pink animate-wiggle' : 'border-white'}`}>
-        <div className="text-center mb-2">
-          <div className="bg-slate-50 text-slate-400 text-[8px] px-3 py-1 rounded-full font-black tracking-widest inline-block border border-slate-100 uppercase">
+      <div className={`w-full max-w-sm mx-auto bg-white rounded-[2.5rem] sm:rounded-[4rem] p-4 sm:p-6 shadow-2xl border-4 flex-1 flex flex-col relative overflow-hidden mb-4 sm:mb-6 transition-colors duration-300 ${isWrong ? 'border-brand-pink animate-wiggle' : 'border-white'}`}>
+        <div className="text-center mb-3 sm:mb-4">
+          <div className="bg-slate-100 text-slate-500 text-[8px] sm:text-[10px] px-4 sm:px-6 py-1.5 sm:py-2 rounded-full font-black tracking-widest inline-block border-2 border-white shadow-sm uppercase">
             {level.unit}
           </div>
         </div>
-        <h2 className="text-xl font-black text-slate-800 text-center mb-6 leading-tight flex items-center justify-center px-4">{level.question}</h2>
-        <div className="flex-1 flex justify-center items-center bg-slate-50/50 rounded-[1.5rem] border border-dashed border-slate-200 overflow-hidden p-6 mb-6">
+        <h2 className="text-lg sm:text-2xl font-black text-slate-800 text-center mb-4 sm:mb-6 leading-tight px-2">{level.question}</h2>
+        <div className="flex-1 flex justify-center items-center bg-slate-50/40 rounded-[2rem] sm:rounded-[3.5rem] border-4 border-dashed border-slate-100/60 overflow-hidden p-2 sm:p-4 mb-4 sm:mb-6 min-h-[220px] sm:min-h-[300px] relative">
           {renderVisuals()}
         </div>
-        <div className="grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4">
           {level.config.options.map((opt: any, i: number) => (
-            <button key={i} className={`h-14 rounded-2xl font-black text-xl border-2 transition-all shadow-sm active:translate-y-1 ${selected === String(opt) ? (String(opt) === String(level.config.ans) ? 'bg-brand-green text-white border-brand-green' : 'bg-brand-pink text-white border-brand-pink') : 'bg-white text-slate-700 border-slate-100 active:bg-slate-50'}`} onClick={() => checkAnswer(opt)}>{opt}</button>
+            <button 
+              key={i} 
+              disabled={selected !== null}
+              className={`h-14 sm:h-16 rounded-[1.8rem] sm:rounded-[2.2rem] font-black text-xl sm:text-2xl border-b-[6px] sm:border-b-[10px] transition-all shadow-lg active:border-b-0 active:translate-y-2 ${selected === String(opt) ? (String(opt) === String(level.config.ans) ? 'bg-brand-green text-white border-green-600' : 'bg-brand-pink text-white border-red-600') : 'bg-white text-slate-700 border-slate-200 active:bg-slate-50'}`} 
+              onClick={() => checkAnswer(opt)}
+            >
+              {opt}
+            </button>
           ))}
         </div>
       </div>
 
       {showGameOver && (
-          <div className="fixed inset-0 z-[100] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center p-8 animate-pop">
+          <div className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-xl flex items-center justify-center p-6 sm:p-8 animate-pop">
               {!showParentAuth ? (
-                <div className="bg-white rounded-[2.5rem] p-8 text-center shadow-2xl border-4 border-white max-w-xs w-full">
-                    <div className="text-6xl mb-4 animate-bounce">🙀</div>
-                    <h2 className="text-xl font-black text-slate-800 mb-6">哎呀，能量耗尽了</h2>
-                    <div className="space-y-3">
-                      <Button variant="success" fullWidth onClick={() => { if(coins >= LIVE_COST) { onUpdateCoins(-LIVE_COST); resetRevive(); } else { setErrorShake(true); setTimeout(() => setErrorShake(false), 500); } }} className="rounded-xl h-14 text-sm"><CoinIcon size={16} className="mr-2" /> {LIVE_COST} 金币复活</Button>
-                      <Button variant="secondary" fullWidth onClick={() => setShowParentAuth(true)} className="rounded-xl h-14 text-sm">向家长申请复活</Button>
-                      <Button variant="neutral" fullWidth onClick={onBack} className="rounded-xl h-12 text-xs border-none text-slate-400">回到地图</Button>
+                <div className="bg-white rounded-[2.5rem] sm:rounded-[3.5rem] p-8 sm:p-10 text-center shadow-2xl border-4 border-white max-w-xs w-full">
+                    <div className="text-5xl sm:text-7xl mb-4 sm:mb-6 animate-bounce">😿</div>
+                    <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-6 sm:mb-8">体力耗尽啦！</h2>
+                    <div className="space-y-3 sm:space-y-4">
+                      <Button variant="success" fullWidth onClick={() => { if(coins >= 100) { onUpdateCoins(-100); resetRevive(); } else { setErrorShake(true); setTimeout(() => setErrorShake(false), 500); } }} className="rounded-2xl h-14 sm:h-16 text-base sm:text-lg"><CoinIcon size={20} className="mr-2" /> 100 复活</Button>
+                      <Button variant="secondary" fullWidth onClick={() => setShowParentAuth(true)} className="rounded-2xl h-14 sm:h-16 text-base sm:text-lg">家长辅导复活</Button>
+                      <Button variant="neutral" fullWidth onClick={onBack} className="rounded-2xl h-10 sm:h-12 text-xs border-none text-slate-400 font-black uppercase tracking-widest">返回地图</Button>
                     </div>
                 </div>
               ) : (
-                <div className={`bg-white rounded-[2.5rem] p-8 text-center shadow-2xl border-4 border-brand-purple max-w-xs w-full ${errorShake ? 'animate-wiggle' : ''}`}>
-                    <h3 className="text-xl font-black text-slate-800 mb-2">家长验证</h3>
-                    <p className="text-[10px] font-bold text-slate-400 mb-6">请输入 4 位 PIN 码复活</p>
-                    <div className="flex justify-center space-x-3 mb-8">
-                      {[0, 1, 2, 3].map(i => <div key={i} className={`w-4 h-4 rounded-full border-2 border-slate-200 ${i < inputPin.length ? 'bg-brand-purple' : 'bg-transparent'}`}></div>)}
+                <div className={`bg-white rounded-[3rem] sm:rounded-[4rem] p-8 sm:p-12 text-center shadow-2xl border-4 border-brand-purple max-w-xs w-full ${errorShake ? 'animate-wiggle' : ''}`}>
+                    <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 tracking-tighter">家长安全验证</h3>
+                    <p className="text-[8px] sm:text-[10px] text-slate-400 font-black mb-6 sm:mb-8 uppercase tracking-widest">请输入 PIN 码解锁</p>
+                    <div className="flex justify-center space-x-3 sm:space-x-4 mb-8 sm:mb-10">
+                      {[0, 1, 2, 3].map(i => <div key={i} className={`w-4 h-4 sm:w-6 sm:h-6 rounded-full border-2 sm:border-4 border-slate-100 ${i < inputPin.length ? 'bg-brand-purple border-brand-purple' : 'bg-transparent'}`}></div>)}
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {[1,2,3,4,5,6,7,8,9].map(n => <button key={n} onClick={() => handleReviveInput(n.toString())} className="h-12 rounded-xl bg-slate-50 font-black text-lg active:bg-slate-100">{n}</button>)}
-                      <button onClick={() => setShowParentAuth(false)} className="text-slate-300 font-black text-xs">取消</button>
-                      <button onClick={() => handleReviveInput('0')} className="h-12 rounded-xl bg-slate-50 font-black text-lg">0</button>
+                    <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                      {[1,2,3,4,5,6,7,8,9].map(n => <button key={n} onClick={() => handleReviveInput(n.toString())} className="h-12 sm:h-16 rounded-xl sm:rounded-2xl bg-slate-50 font-black text-lg sm:text-xl border-b-4 border-slate-200 active:border-b-0 active:translate-y-1 transition-all">{n}</button>)}
+                      <button onClick={() => setShowParentAuth(false)} className="text-slate-300 font-black text-[10px] sm:text-sm uppercase">取消</button>
+                      <button onClick={() => handleReviveInput('0')} className="h-12 sm:h-16 rounded-xl sm:rounded-2xl bg-slate-50 font-black text-lg sm:text-xl border-b-4 border-slate-200 active:border-b-0 active:translate-y-1 transition-all">0</button>
                     </div>
                 </div>
               )}
