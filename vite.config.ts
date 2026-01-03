@@ -7,6 +7,14 @@ export default defineConfig(({ mode }) => {
     return {
       // 添加base配置，确保脚本引用路径正确
       base: '/',
+      // 配置入口文件
+      build: {
+        rollupOptions: {
+          input: {
+            main: path.resolve(__dirname, 'index.html'),
+          },
+        },
+      },
       server: {
         port: 3001,
         host: '0.0.0.0',
