@@ -53,15 +53,35 @@
         display: flex; flex-direction: column; align-items: center; justify-content: center; 
         background: #f0f9ff; 
       }
-      /* 使用CSS动画直接隐藏加载动画 */
-      .loader-container.hidden, .loader-container { 
-        animation: fadeOut 1s ease-out 0.5s forwards;
+      /* 确保加载动画能够在指定时间后隐藏 */
+      .loader-container {
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        background: #f0f9ff;
+        /* 使用!important确保动画能够被正确应用 */
+        animation: fadeOut 1s ease-out 0.5s forwards !important;
+        /* 确保初始状态是可见的 */
+        opacity: 1 !important;
+        visibility: visible !important;
+        display: flex !important;
       }
+      /* 动画结束后，确保加载动画完全隐藏 */
+      @keyframes fadeOut { 
+        0% { opacity: 1; visibility: visible; display: flex; } 
+        99% { opacity: 0; visibility: visible; display: flex; } 
+        100% { opacity: 0; visibility: hidden; display: none; } 
+      }
+      /* 铅笔动画 */
       .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
       @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
-      @keyframes fadeOut { 
-        from { opacity: 1; visibility: visible; } 
-        to { opacity: 0; visibility: hidden; display: none; } 
+      /* 页面内容样式，确保在加载动画隐藏后能够正常显示 */
+      #root {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        opacity: 1;
+        visibility: visible;
       }
     </style>
 
