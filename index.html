@@ -1,158 +1,114 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>快乐数学 - 同步人教版</title>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>快乐数学 - 同步人教版</title>
+  <style>
+    /* 基础样式 */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f9ff;
+    }
     
-    <style>
-      /* 基础样式 */
-      :root { 
-        --sat: env(safe-area-inset-top); 
-        --sab: env(safe-area-inset-bottom);
-        --brand-blue: #4D96FF;
-      }
-      
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
-      html, body { 
-        height: 100%; 
-        width: 100%; 
-        margin: 0; 
-        padding: 0; 
-        overflow: hidden; 
-        background-color: #f0f9ff; 
-        font-family: 'Comic Sans MS', system-ui, sans-serif;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-      }
-      
-      /* 加载动画样式 */
-      .loader-container { 
-        position: fixed; 
-        top: 0; 
-        left: 0; 
-        right: 0; 
-        bottom: 0; 
-        z-index: 9999;
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        justify-content: center; 
-        background: #f0f9ff; 
-        transition: opacity 0.5s ease-out, visibility 0.5s;
-      }
-      
-      .loader-container.hidden { 
-        opacity: 0; 
-        visibility: hidden; 
-        pointer-events: none; 
-      }
-      
-      .pencil-loader { 
-        font-size: 64px; 
-        animation: writing 1s infinite alternate ease-in-out; 
-        margin-bottom: 16px;
-      }
-      
-      @keyframes writing { 
-        from { transform: translate(-10px, 0) rotate(-5deg); } 
-        to { transform: translate(10px, -5px) rotate(15deg); } 
-      }
-      
-      .loading-text {
-        font-size: 20px;
-        font-weight: bold;
-        color: var(--brand-blue);
-        text-align: center;
-        padding: 0 24px;
-        animation: pulse 1.5s ease-in-out infinite;
-      }
-      
-      @keyframes pulse {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.6; }
-      }
-      
-      /* 应用内容样式 */
-      #root {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        padding: 32px;
-        align-items: center;
-        justify-content: center;
-        background-color: #f0f9ff;
-      }
-      
-      .app-title {
-        font-size: 36px;
-        font-weight: bold;
-        color: var(--brand-blue);
-        text-align: center;
-        margin-bottom: 16px;
-      }
-      
-      .app-content {
-        font-size: 18px;
-        color: #333;
-        text-align: center;
-        margin-bottom: 8px;
-      }
-      
-      .app-subcontent {
-        font-size: 14px;
-        color: #666;
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- 加载动画 -->
-    <div id="app-loader" class="loader-container">
-      <div class="pencil-loader">✏️</div>
-      <div class="loading-text">数学魔法召唤中...</div>
-    </div>
+    /* 加载动画 */
+    #app-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #f0f9ff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      animation: fadeOut 1s ease-out 0.5s forwards;
+    }
     
-    <!-- 应用内容 -->
-    <div id="root">
-      <h1 class="app-title">快乐数学</h1>
-      <p class="app-content">应用已经成功加载！</p>
-      <p class="app-subcontent">这是一个简化版本，用于测试加载动画是否能正常隐藏。</p>
-    </div>
+    /* 使用CSS动画直接隐藏加载动画，不需要JavaScript */
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        visibility: visible;
+      }
+      to {
+        opacity: 0;
+        visibility: hidden;
+        display: none;
+      }
+    }
     
-    <!-- 直接在HTML中添加隐藏加载动画的逻辑 -->
-    <script>
-      // 使用立即执行函数表达式，确保代码能够被执行
-      (function() {
-        console.log('立即执行函数表达式开始执行');
-        
-        // 直接隐藏加载动画，不使用setTimeout
-        var loader = document.getElementById('app-loader');
-        if (loader) {
-          console.log('添加hidden类到加载动画元素');
-          loader.classList.add('hidden');
-          console.log('加载动画已隐藏');
-        } else {
-          console.error('未找到加载动画元素');
-        }
-        
-        // 额外添加一个setTimeout作为备份
-        setTimeout(function() {
-          console.log('setTimeout备份执行');
-          var loader = document.getElementById('app-loader');
-          if (loader && !loader.classList.contains('hidden')) {
-            console.log('备份：添加hidden类到加载动画元素');
-            loader.classList.add('hidden');
-            console.log('备份：加载动画已隐藏');
-          }
-        }, 1000);
-      })();
-    </script>
-  </body>
+    /* 铅笔动画 */
+    .pencil-loader {
+      font-size: 64px;
+      animation: writing 1s infinite alternate ease-in-out;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes writing {
+      from { transform: translate(-10px, 0) rotate(-5deg); }
+      to { transform: translate(10px, -5px) rotate(15deg); }
+    }
+    
+    /* 加载文本 */
+    .loading-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: #4D96FF;
+      text-align: center;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* 应用内容 */
+    #root {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .app-title {
+      font-size: 36px;
+      color: #4D96FF;
+      margin-bottom: 16px;
+    }
+    
+    .app-content {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .app-subcontent {
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- 加载动画，使用CSS动画直接隐藏，不需要JavaScript -->
+  <div id="app-loader">
+    <div class="pencil-loader">✏️</div>
+    <div class="loading-text">数学魔法召唤中...</div>
+  </div>
+  
+  <!-- 应用内容 -->
+  <div id="root">
+    <h1 class="app-title">快乐数学</h1>
+    <p class="app-content">应用已经成功加载！</p>
+    <p class="app-subcontent">这是一个简化版本，用于测试加载动画是否能正常隐藏。</p>
+  </div>
+</body>
 </html>
