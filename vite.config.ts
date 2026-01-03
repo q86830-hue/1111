@@ -9,6 +9,7 @@ export default defineConfig(({ mode }) => {
       base: '/',
       // 配置入口文件为index.html
       build: {
+        outDir: 'dist',
         rollupOptions: {
           input: {
             main: path.resolve(__dirname, 'index.html'),
