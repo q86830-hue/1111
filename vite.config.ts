@@ -5,6 +5,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, '.', '');
     return {
+      // 添加base配置，确保脚本引用路径正确
+      base: '/',
       server: {
         port: 3001,
         host: '0.0.0.0',
