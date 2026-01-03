@@ -98,6 +98,13 @@
       text-align: center;
     }
     
+    /* 隐藏类样式 */
+    .hidden {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    
     .error-title {
       font-size: 36px;
       font-weight: bold;
@@ -156,8 +163,9 @@
     console.log('开始执行脚本...');
     
     // 1. 直接在HTML中隐藏加载动画，不依赖外部JavaScript文件
+    // 使用多个setTimeout确保加载动画一定会被隐藏
     setTimeout(function() {
-      console.log('尝试隐藏加载动画...');
+      console.log('第一次尝试隐藏加载动画...');
       var loader = document.getElementById('app-loader');
       if (loader) {
         console.log('添加hidden类到加载动画元素');
@@ -167,6 +175,20 @@
         console.error('未找到加载动画元素');
       }
     }, 500);
+    
+    // 3秒后再次尝试隐藏，确保万无一失
+    setTimeout(function() {
+      console.log('第二次尝试隐藏加载动画...');
+      var loader = document.getElementById('app-loader');
+      if (loader) {
+        console.log('直接设置加载动画样式为隐藏');
+        loader.style.display = 'none';
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        loader.style.zIndex = '-1';
+        console.log('加载动画已强制隐藏');
+      }
+    }, 3000);
     
     // 2. 确保#root元素可见
     var root = document.getElementById('root');
