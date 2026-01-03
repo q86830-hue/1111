@@ -201,8 +201,6 @@
       to { transform: translateY(-10px); }
     }
   </style>
-  <script type="module" crossorigin src="/assets/main-CaehPgqw.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/main-DUbStHPd.css">
 </head>
 <body>
   <!-- 加载动画 -->
@@ -271,6 +269,9 @@
     }
   </script>
   
-  <!-- React应用入口 -->
+  <!-- React应用入口 - 使用纯JavaScript文件避免MIME类型错误 -->
+  <script src="https://unpkg.com/react@19/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@19/umd/react-dom.development.js"></script>
+  <script src="./index.js"></script>
 </body>
 </html>
