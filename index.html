@@ -1,102 +1,160 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>快乐数学 - 同步人教版</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      window.process = { env: { NODE_ENV: 'production' } };
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              brand: {
-                yellow: '#FFD93D', orange: '#FF8400', green: '#6BCB77',
-                blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
-              }
-            },
-            fontFamily: { sans: ['"Comic Sans MS"', 'system-ui', 'sans-serif'] },
-            keyframes: {
-              wiggle: { '0%, 100%': { transform: 'rotate(-2deg)' }, '50%': { transform: 'rotate(2deg)' } },
-              pop: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
-              fadeOut: { 
-                from: { opacity: 1, visibility: 'visible' }, 
-                to: { opacity: 0, visibility: 'hidden', display: 'none' } 
-              }
-            },
-            animation: {
-              wiggle: 'wiggle 0.3s ease-in-out infinite',
-              pop: 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
-              'bounce-slow': 'bounce 3s infinite',
-              'fade-out': 'fadeOut 1s ease-out 0.5s forwards'
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>快乐数学 - 同步人教版</title>
+  
+  <!-- 添加Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <script>
+    // 配置Tailwind CSS
+    window.process = { env: { NODE_ENV: 'production' } };
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              yellow: '#FFD93D', orange: '#FF8400', green: '#6BCB77',
+              blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
             }
           }
         }
       }
-    </script>
-
+    }
+  </script>
+  
+  <style>
+    /* 基础样式 */
+    html, body {
+      height: 100%; width: 100%; margin: 0; padding: 0;
+      overflow: hidden; background-color: #f0f9ff;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Comic Sans MS', system-ui, sans-serif;
+    }
     
-    <style>
-      :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
-      html, body { 
-        height: 100dvh; width: 100vw; margin: 0; padding: 0; 
-        overflow: hidden; background-color: #f0f9ff; 
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: transparent;
-      }
-      #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
-      
-      .loader-container { 
-        position: fixed; inset: 0; z-index: 9999;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        background: #f0f9ff; 
-      }
-      /* 确保加载动画能够在指定时间后隐藏 */
-      .loader-container {
-        position: fixed; inset: 0; z-index: 9999;
-        display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        background: #f0f9ff;
-        /* 使用!important确保动画能够被正确应用 */
-        animation: fadeOut 1s ease-out 0.5s forwards !important;
-        /* 确保初始状态是可见的 */
-        opacity: 1 !important;
-        visibility: visible !important;
-        display: flex !important;
-      }
-      /* 动画结束后，确保加载动画完全隐藏 */
-      @keyframes fadeOut { 
-        0% { opacity: 1; visibility: visible; display: flex; } 
-        99% { opacity: 0; visibility: visible; display: flex; } 
-        100% { opacity: 0; visibility: hidden; display: none; } 
-      }
-      /* 铅笔动画 */
-      .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
-      @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
-      /* 页面内容样式，确保在加载动画隐藏后能够正常显示 */
-      #root {
-        height: 100%;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        opacity: 1;
-        visibility: visible;
-      }
-    </style>
-
+    /* 确保#root元素始终可见 */
+    #root {
+      height: 100%; width: 100%;
+      display: flex; flex-direction: column;
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 1 !important;
+    }
+    
+    /* 加载动画样式 */
+    .loader-container {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #f0f9ff;
+      /* 使用CSS动画确保加载动画能够被隐藏 */
+      animation: loaderHide 3s ease-out forwards !important;
+      /* 确保初始状态是可见的 */
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: flex !important;
+    }
+    
+    /* 加载动画隐藏动画 */
+    @keyframes loaderHide {
+      0% { opacity: 1; visibility: visible; }
+      80% { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; display: none; }
+    }
+    
+    /* 铅笔动画 */
+    .pencil-loader {
+      font-size: 64px;
+      animation: writing 1s infinite alternate ease-in-out;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes writing {
+      from { transform: translate(-10px, 0) rotate(-5deg); }
+      to { transform: translate(10px, -5px) rotate(15deg); }
+    }
+    
+    /* 加载文本 */
+    .loading-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: #4D96FF;
+      text-align: center;
+      padding: 0 24px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* 错误页面样式 */
+    .error-page {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; padding: 20px;
+      text-align: center;
+    }
+    
+    .error-title {
+      font-size: 36px;
+      font-weight: bold;
+      color: #FF6B6B;
+      margin-bottom: 16px;
+    }
+    
+    .error-message {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .error-submessage {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    
+    .error-button {
+      background-color: #4D96FF;
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .error-button:hover {
+      background-color: #3B82F6;
+    }
+  </style>
 </head>
-  <body>
-    <div id="app-loader" class="loader-container">
-      <div class="pencil-loader mb-4">✏️</div>
-      <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center px-6">数学魔法召唤中...</div>
+<body>
+  <!-- 加载动画 -->
+  <div id="app-loader" class="loader-container">
+    <div class="pencil-loader">✏️</div>
+    <div class="loading-text">数学魔法召唤中...</div>
+  </div>
+  
+  <!-- 应用内容 -->
+  <div id="root">
+    <!-- 备用内容：如果React应用无法加载，显示这个错误页面 -->
+    <div class="error-page">
+      <h1 class="error-title">应用出现问题</h1>
+      <p class="error-message">很抱歉，应用加载遇到了一些问题。</p>
+      <p class="error-submessage">请尝试刷新页面，或者稍后再试。</p>
+      <button class="error-button" onclick="window.location.reload()">刷新页面</button>
     </div>
-    <div id="root"></div>
+  </div>
+  
   <!-- 确保脚本能够被正确执行 -->
   <script>
     console.log('开始执行脚本...');
     
-    // 直接在HTML中隐藏加载动画，不依赖外部JavaScript文件
+    // 1. 直接在HTML中隐藏加载动画，不依赖外部JavaScript文件
     setTimeout(function() {
       console.log('尝试隐藏加载动画...');
       var loader = document.getElementById('app-loader');
@@ -108,9 +166,18 @@
         console.error('未找到加载动画元素');
       }
     }, 500);
+    
+    // 2. 确保#root元素可见
+    var root = document.getElementById('root');
+    if (root) {
+      root.style.opacity = '1';
+      root.style.visibility = 'visible';
+      root.style.zIndex = '1';
+      console.log('确保#root元素可见');
+    }
   </script>
   
-  <!-- 使用defer属性，确保脚本在DOM加载完成后执行 -->
-  <script type="module" src="/index.tsx" defer></script>
+  <!-- React应用入口 -->
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
