@@ -1,114 +1,77 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>快乐数学 - 同步人教版</title>
-  <style>
-    /* 基础样式 */
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f0f9ff;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>快乐数学 - 同步人教版</title>
     
-    /* 加载动画 */
-    #app-loader {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #f0f9ff;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      animation: fadeOut 1s ease-out 0.5s forwards;
-    }
-    
-    /* 使用CSS动画直接隐藏加载动画，不需要JavaScript */
-    @keyframes fadeOut {
-      from {
-        opacity: 1;
-        visibility: visible;
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      window.process = { env: { NODE_ENV: 'production' } };
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                yellow: '#FFD93D', orange: '#FF8400', green: '#6BCB77',
+                blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
+              }
+            },
+            fontFamily: { sans: ['"Comic Sans MS"', 'system-ui', 'sans-serif'] },
+            keyframes: {
+              wiggle: { '0%, 100%': { transform: 'rotate(-2deg)' }, '50%': { transform: 'rotate(2deg)' } },
+              pop: { '0%': { transform: 'scale(0.9)', opacity: '0' }, '100%': { transform: 'scale(1)', opacity: '1' } },
+              fadeOut: { 
+                from: { opacity: 1, visibility: 'visible' }, 
+                to: { opacity: 0, visibility: 'hidden', display: 'none' } 
+              }
+            },
+            animation: {
+              wiggle: 'wiggle 0.3s ease-in-out infinite',
+              pop: 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+              'bounce-slow': 'bounce 3s infinite',
+              'fade-out': 'fadeOut 1s ease-out 0.5s forwards'
+            }
+          }
+        }
       }
-      to {
-        opacity: 0;
-        visibility: hidden;
-        display: none;
+    </script>
+
+    
+    <style>
+      :root { --sat: env(safe-area-inset-top); --sab: env(safe-area-inset-bottom); }
+      html, body { 
+        height: 100dvh; width: 100vw; margin: 0; padding: 0; 
+        overflow: hidden; background-color: #f0f9ff; 
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: transparent;
       }
-    }
-    
-    /* 铅笔动画 */
-    .pencil-loader {
-      font-size: 64px;
-      animation: writing 1s infinite alternate ease-in-out;
-      margin-bottom: 16px;
-    }
-    
-    @keyframes writing {
-      from { transform: translate(-10px, 0) rotate(-5deg); }
-      to { transform: translate(10px, -5px) rotate(15deg); }
-    }
-    
-    /* 加载文本 */
-    .loading-text {
-      font-size: 20px;
-      font-weight: bold;
-      color: #4D96FF;
-      text-align: center;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.6; }
-    }
-    
-    /* 应用内容 */
-    #root {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      text-align: center;
-    }
-    
-    .app-title {
-      font-size: 36px;
-      color: #4D96FF;
-      margin-bottom: 16px;
-    }
-    
-    .app-content {
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 8px;
-    }
-    
-    .app-subcontent {
-      font-size: 14px;
-      color: #666;
-    }
-  </style>
+      #root { height: 100%; width: 100%; display: flex; flex-direction: column; }
+      
+      .loader-container { 
+        position: fixed; inset: 0; z-index: 9999;
+        display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        background: #f0f9ff; 
+      }
+      /* 使用CSS动画直接隐藏加载动画 */
+      .loader-container.hidden, .loader-container { 
+        animation: fadeOut 1s ease-out 0.5s forwards;
+      }
+      .pencil-loader { font-size: 64px; animation: writing 1s infinite alternate ease-in-out; }
+      @keyframes writing { from { transform: translate(-10px, 0) rotate(-5deg); } to { transform: translate(10px, -5px) rotate(15deg); } }
+      @keyframes fadeOut { 
+        from { opacity: 1; visibility: visible; } 
+        to { opacity: 0; visibility: hidden; display: none; } 
+      }
+    </style>
+
 </head>
-<body>
-  <!-- 加载动画，使用CSS动画直接隐藏，不需要JavaScript -->
-  <div id="app-loader">
-    <div class="pencil-loader">✏️</div>
-    <div class="loading-text">数学魔法召唤中...</div>
-  </div>
-  
-  <!-- 应用内容 -->
-  <div id="root">
-    <h1 class="app-title">快乐数学</h1>
-    <p class="app-content">应用已经成功加载！</p>
-    <p class="app-subcontent">这是一个简化版本，用于测试加载动画是否能正常隐藏。</p>
-  </div>
+  <body>
+    <div id="app-loader" class="loader-container">
+      <div class="pencil-loader mb-4">✏️</div>
+      <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center px-6">数学魔法召唤中...</div>
+    </div>
+    <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
 </body>
 </html>
