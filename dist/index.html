@@ -93,5 +93,24 @@
       <div class="text-xl font-black text-brand-blue animate-pulse tracking-widest text-center px-6">数学魔法召唤中...</div>
     </div>
     <div id="root"></div>
+  <!-- 确保脚本能够被正确执行 -->
+  <script>
+    console.log('开始执行脚本...');
+    
+    // 直接在HTML中隐藏加载动画，不依赖外部JavaScript文件
+    setTimeout(function() {
+      console.log('尝试隐藏加载动画...');
+      var loader = document.getElementById('app-loader');
+      if (loader) {
+        console.log('添加hidden类到加载动画元素');
+        loader.classList.add('hidden');
+        console.log('加载动画已隐藏');
+      } else {
+        console.error('未找到加载动画元素');
+      }
+    }, 500);
+  </script>
+  
+  <!-- 使用defer属性，确保脚本在DOM加载完成后执行 -->
 </body>
 </html>
