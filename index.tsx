@@ -1,6 +1,8 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';
+// 导入Tailwind CSS样式
+import './src/index.css';
 
 console.log('开始渲染React应用...');
 console.log('React版本:', React.version);

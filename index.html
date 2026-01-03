@@ -5,25 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>快乐数学 - 同步人教版</title>
   
-  <!-- 添加Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  
-  <script>
-    // 配置Tailwind CSS
-    window.process = { env: { NODE_ENV: 'production' } };
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              yellow: '#FFD93D', orange: '#FF8400', green: '#6BCB77',
-              blue: '#4D96FF', pink: '#FF6B6B', purple: '#9D4EDD'
-            }
-          }
-        }
-      }
-    }
-  </script>
+  <!-- 添加本地CSS引用 -->
+  <link rel="stylesheet" href="/src/index.css">
   
   <style>
     /* 基础样式 */
