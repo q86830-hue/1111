@@ -20,7 +20,10 @@ export default defineConfig(({ mode }) => {
       server: {
         port: 3001,
         host: '0.0.0.0',
-        open: true
+        open: true,
+        headers: {
+          'Content-Type': 'application/javascript; charset=utf-8'
+        }
       },
       plugins: [react()],
       define: {
