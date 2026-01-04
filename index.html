@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>快乐数学 - 同步人教版</title>
+  
+
+  
+  <style>
+    /* 基础样式 */
+    html, body {
+      height: 100%; width: 100%; margin: 0; padding: 0;
+      overflow: hidden; background-color: #f0f9ff;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      font-family: 'Comic Sans MS', system-ui, sans-serif;
+    }
+    
+    /* 确保#root元素始终可见 */
+    #root {
+      height: 100%; width: 100%;
+      display: flex; flex-direction: column;
+      opacity: 1 !important;
+      visibility: visible !important;
+      z-index: 1 !important;
+    }
+    
+    /* 加载动画样式 */
+    .loader-container {
+      position: fixed; inset: 0; z-index: 9999;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: #f0f9ff;
+      /* 使用CSS动画确保加载动画能够被隐藏 */
+      animation: loaderHide 3s ease-out forwards !important;
+      /* 确保初始状态是可见的 */
+      opacity: 1 !important;
+      visibility: visible !important;
+      display: flex !important;
+    }
+    
+    /* 加载动画隐藏动画 */
+    @keyframes loaderHide {
+      0% { opacity: 1; visibility: visible; }
+      80% { opacity: 1; visibility: visible; }
+      100% { opacity: 0; visibility: hidden; display: none; }
+    }
+    
+    /* 铅笔动画 */
+    .pencil-loader {
+      font-size: 64px;
+      animation: writing 1s infinite alternate ease-in-out;
+      margin-bottom: 16px;
+    }
+    
+    @keyframes writing {
+      from { transform: translate(-10px, 0) rotate(-5deg); }
+      to { transform: translate(10px, -5px) rotate(15deg); }
+    }
+    
+    /* 加载文本 */
+    .loading-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: #4D96FF;
+      text-align: center;
+      padding: 0 24px;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    /* 错误页面样式 */
+    .error-page {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; padding: 20px;
+      text-align: center;
+    }
+    
+    /* 隐藏类样式 */
+    .hidden {
+      display: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    
+    .error-title {
+      font-size: 36px;
+      font-weight: bold;
+      color: #FF6B6B;
+      margin-bottom: 16px;
+    }
+    
+    .error-message {
+      font-size: 18px;
+      color: #333;
+      margin-bottom: 8px;
+    }
+    
+    .error-submessage {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 24px;
+    }
+    
+    .error-button {
+      background-color: #4D96FF;
+      color: white;
+      font-weight: bold;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .error-button:hover {
+      background-color: #3B82F6;
+    }
+    
+    /* 欢迎页面样式 */
+    .welcome-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(to bottom, #f0f9ff, #e0f2fe);
+    }
+    
+    .welcome-title {
+      font-size: 48px;
+      font-weight: bold;
+      color: #4D96FF;
+      margin-bottom: 8px;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .welcome-subtitle {
+      font-size: 18px;
+      color: #6B7280;
+      margin-bottom: 32px;
+    }
+    
+    .welcome-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+    
+    .welcome-character {
+      font-size: 96px;
+      animation: bounce 1s infinite alternate ease-in-out;
+      margin-bottom: 16px;
+    }
+    
+    .welcome-text {
+      font-size: 24px;
+      font-weight: bold;
+      color: #1F2937;
+    }
+    
+    .welcome-description {
+      font-size: 16px;
+      color: #4B5563;
+      max-width: 400px;
+      line-height: 1.5;
+    }
+    
+    .welcome-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 16px;
+    }
+    
+    .welcome-button {
+      background-color: #4D96FF;
+      color: white;
+      font-weight: bold;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      font-size: 16px;
+    }
+    
+    .welcome-button:hover {
+      background-color: #3B82F6;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-BdPbcBVE.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BDH9kbDS.css">
+</head>
+<body>
+  <!-- 加载动画 -->
+  <div id="app-loader" class="loader-container">
+    <div class="pencil-loader">✏️</div>
+    <div class="loading-text">数学魔法召唤中...</div>
+  </div>
+  
+  <!-- 应用内容 -->
+  <div id="root">
+    <!-- 备用内容：如果React应用无法加载，显示这个简单的欢迎页面 -->
+    <div class="welcome-page">
+      <h1 class="welcome-title">快乐数学</h1>
+      <p class="welcome-subtitle">同步人教版课程</p>
+      <div class="welcome-content">
+        <div class="welcome-character">🐼</div>
+        <p class="welcome-text">欢迎来到快乐数学！</p>
+        <p class="welcome-description">这里有有趣的数学游戏和练习，帮助你提高数学成绩。</p>
+        <div class="welcome-actions">
+          <button class="welcome-button" onclick="window.location.reload()">刷新页面</button>
+          <button class="welcome-button" onclick="window.open('https://github.com', '_blank')">访问GitHub</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Vite入口脚本 -->
+  
+  <script>
+    console.log('开始执行脚本...');
+    
+    // 1. 直接在HTML中隐藏加载动画，不依赖外部JavaScript文件
+    // 使用多个setTimeout确保加载动画一定会被隐藏
+    setTimeout(function() {
+      console.log('第一次尝试隐藏加载动画...');
+      var loader = document.getElementById('app-loader');
+      if (loader) {
+        console.log('添加hidden类到加载动画元素');
+        loader.classList.add('hidden');
+        console.log('加载动画已隐藏');
+      } else {
+        console.error('未找到加载动画元素');
+      }
+    }, 500);
+    
+    // 3秒后再次尝试隐藏，确保万无一失
+    setTimeout(function() {
+      console.log('第二次尝试隐藏加载动画...');
+      var loader = document.getElementById('app-loader');
+      if (loader) {
+        console.log('直接设置加载动画样式为隐藏');
+        loader.style.display = 'none';
+        loader.style.opacity = '0';
+        loader.style.visibility = 'hidden';
+        loader.style.zIndex = '-1';
+        console.log('加载动画已强制隐藏');
+      }
+    }, 3000);
+    
+    // 2. 确保#root元素可见
+    var root = document.getElementById('root');
+    if (root) {
+      root.style.opacity = '1';
+      root.style.visibility = 'visible';
+      root.style.zIndex = '1';
+      console.log('确保#root元素可见');
+    }
+  </script>
+</body>
+</html>
